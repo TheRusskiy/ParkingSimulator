@@ -1,31 +1,54 @@
 require 'minitest/autorun'
-require 'minitest/reporters'
-MiniTest::Reporters.use!
+require "minitest/reporters"
+MiniTest::Reporters.use! MiniTest::Reporters::RubyMineReporter.new
 
 class RoadTest < MiniTest::Unit::TestCase
+  require '../src/road'
+  require '../src/car'
+  require '../src/distance_calculator'
 
-  # Called before every test method runs. Can be used
-  # to set up fixture information.
   def setup
-    # Do nothing
+    @road = Road.new()
+    @c1 = Coordinate.new(0, 0)
+    @c2 = Coordinate.new(100, 100)
   end
-
-  # Called after every test method runs. Can be used to tear
-  # down fixture information.
 
   def teardown
     # Do nothing
   end
 
-  # Fake test
-  def test_fail
-
-    # To change this template use File | Settings | File Templates.
-    fail("Not implemented")
+  def test_initialization
+    assert_kind_of(Road, @road)
   end
-  def test_succeed
 
-    # To change this template use File | Settings | File Templates.
-    assert_equal(1, 1)
+  def test_can_be_asked_for_state
+    assert_respond_to(@road, :get_state)
   end
+
+  def test_has_length
+    @road = Road.new(@c1, @c2)
+    assert_in_delta @road.get_length, 141.42, 0.1
+  end
+
+  def test_can_add_car
+    @road = Road.new
+    @car = Car.new
+    assert_equal @road.has_car?(@car), FALSE
+    @car.move_to(@road)
+    assert_equal @road.has_car?(@car), TRUE
+  end
+
+  def test_has_coordinate
+    @road.get_coordinate(:start)
+  end
+
+  def test_move_car_by
+    car = Car.new
+    car.move_to(@road)
+    old_coord=car.coordinate
+    @road.move_car_by(car, 20)
+    assert_in_delta(DistanceCalculator.distance_between(old_coord, car.coordinate), 20, 0.01)
+
+  end
+
 end
