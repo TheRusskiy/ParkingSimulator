@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require "minitest/reporters"
+require 'minitest/reporters'
 MiniTest::Reporters.use! MiniTest::Reporters::RubyMineReporter.new
 
 class CarTest < MiniTest::Unit::TestCase
@@ -27,7 +27,7 @@ class CarTest < MiniTest::Unit::TestCase
   end
 
   def test_available_space
-    assert_equal @state.get_available_space, @road.get_length
+    assert_equal @state.get_available_space, @road.length
   end
 
   def test_has_coordinate
@@ -35,17 +35,10 @@ class CarTest < MiniTest::Unit::TestCase
   end
 
   def test_gets_road_coordinate
-    assert(@car.coordinate, "Test if nil")
+    @car.coordinate.wont_be_nil
     assert_equal @road.get_coordinate(:start), @car.coordinate
   end
 
-  def test_available_space_for_2_cars
-    @car.move_by(10)
-    @car2=Car.new
-    @car2.move_to(@road)
-    @state = @road.get_state(@car2)
-    assert_in_delta @state.get_available_space, 10, 0.01
-  end
 
   def test_car_can_move
     previous_space = @state.get_available_space

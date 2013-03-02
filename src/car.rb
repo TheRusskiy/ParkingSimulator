@@ -1,5 +1,6 @@
 
 class Car
+  require '../src/coordinate'
   attr_accessor :coordinate
 
   def initialize()
@@ -8,8 +9,8 @@ class Car
 
   def move_to(placement)
     @placement=placement
-    @placement.add_car(self)
     @coordinate=@placement.get_coordinate(:start)
+    @placement.add_car(self)
   end
 
   def get_placement
