@@ -31,6 +31,7 @@ class TestTickThread < MiniTest::Unit::TestCase
   end
 
   def test_can_execute_your_function_n_times
+    $PAUSE_REFRESH_TIME=0
     @tt.set_frequency(100)
     counter = 0
     @tt.set_job(lambda{

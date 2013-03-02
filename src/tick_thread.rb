@@ -1,11 +1,13 @@
 class TickThread
   require '../src/needs_set_up'
+  require 'thread'
   attr_reader :working
   attr_accessor :paused
   $PAUSE_REFRESH_TIME = 0.1 #seconds
   def initialize
     @working = false
     @ticks_buffer = 0
+    @mutex = Mutex.new
   end
 
   def start
@@ -18,8 +20,9 @@ class TickThread
     @working=true
     @paused=false
     @time_thread = Thread.new() {get_time_thread.call}
-    @internal_thread = Thread.new() {get_ticker.call}
-    @internal_thread.priority=10
+    @job_thread = Thread.new() {get_job_thread.call}
+    @time_thread.priority=10
+    @job_thread.priority=7
   end
 
   def stop
@@ -35,27 +38,33 @@ class TickThread
   end
 
   private
-  def get_ticker
+  def get_time_thread
     return lambda {
       while @working
         while @working and not @paused
-          t1=Time.now
-          @job.call
-          t2=Time.now
-          threshold=@delay-(t2-t1)
-          if threshold > 0 #draw if time's left
-            # draw
-            # todo: threshold > draw_time (empirical) ?
-            threshold=@delay-(Time.now-t2)
-            if threshold > 0 #sleep if time's left
-              sleep(threshold)
-            else
-              # todo: if threshold is negative low delay for the next time(only one time)
-              puts "WARNING!!! Can't process that fast, delay=#{@delay}"
-            end
-          else
-            puts "WARNING!!! Frame had to be skipped, delay=#{@delay}"
+          @ticks_buffer+=1
+          sleep(@delay)
+        end
+        sleep($PAUSE_REFRESH_TIME)
+      end
+    }
+  end
+
+  def get_job_thread
+    return lambda {
+      ticks_to_process=0
+      while @working
+        while @working and not @paused
+          @mutex.synchronize do
+            ticks_to_process+=@ticks_buffer
+            @ticks_buffer=0
           end
+          while ticks_to_process>0
+            ticks_to_process-=1
+            @job.call
+          end
+          # DRAW here
+          Thread.pass
         end
         sleep($PAUSE_REFRESH_TIME)
       end
@@ -63,9 +72,7 @@ class TickThread
   end
 
 
-
 end
-
 
 class AlreadyInProgress < Exception
 
