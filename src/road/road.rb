@@ -13,9 +13,9 @@ class Road
     @coordinates[:start] = c1
     @coordinates[:end] = c2
     @length=DistanceCalculator.distance_between(c1, c2)
-    @slope = DistanceCalculator.slope_between(c1, c2)
     @angle = DistanceCalculator.angle_between(c1, c2)
-    @koef =  Math.sqrt(1.0/(1+@slope**2))
+    @sinus = Math.sin(@angle)
+    @cosine = Math.cos(@angle)
   end
 
   def get_state(car)
@@ -28,14 +28,25 @@ class Road
     return state
   end
 
+  def free_space?()
+    for existing_car in @cars
+      return false unless DistanceCalculator.is_safe_between?(existing_car.coordinate, @coordinates[:start])
+    end
+    return true
+  end
 
   def add_car(car)
     if @cars.include?(car); raise CarAddedTwiceException; end
     for existing_car in @cars
-      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car, car)
+      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car.coordinate, car.coordinate)
     end
     @cars << car
     car.coordinate=@coordinates[:start]
+    #if @coordinates[:start].get_y - @coordinates[:end].get_y > 0
+    #  car.state.rotation = - @angle
+    #else
+    #  car.state.rotation = @angle
+    #end
     car.state.rotation = @angle
   end
 
@@ -44,8 +55,10 @@ class Road
   end
 
   def move_car_by(car, by_space)
-    dx=-by_space*@koef
-    dy=dx*@slope
+    @x_sign = @coordinates[:end].get_x-car.coordinate.get_x > 0 ? 1 : -1
+    @y_sign = @coordinates[:end].get_y-car.coordinate.get_y > 0 ? 1 : -1
+    dx = by_space*@cosine
+    dy = by_space*@sinus
     if by_space>=DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])
       @cars.delete(car)
       car.placement=nil

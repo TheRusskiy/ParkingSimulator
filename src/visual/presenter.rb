@@ -1,6 +1,7 @@
 class Presenter
   require_relative 'GraphicCar'
   require '../src/road/car'
+  require 'Qt'
   attr_reader :scene
   @scale
   @scene
@@ -30,6 +31,7 @@ class Presenter
     #  #  end
     #  #end
     #end
+
   end
 
   def add(object)
@@ -59,11 +61,13 @@ class Presenter
           draw_car(object)
       end
     end
+
   end
 
   def draw_car(car)
     car.draw_item.setPos(x(car.coordinate), y(car.coordinate))
-    car.draw_item.setRotation(car.state.rotation)
+    car.draw_item.setRotation(car.state.rotation/Math::PI*180.0)
+    car.draw_item.setScale(@scale)
     #car.draw_item.setRotation(car.state.rotation) todo
   end
 
@@ -76,10 +80,10 @@ class Presenter
   end
 
   def x(coordinate)
-    coordinate.get_x*@scale
+    Integer(coordinate.get_x*@scale)
   end
 
   def y(coordinate)
-    coordinate.get_y*@scale
+    Integer(coordinate.get_y*@scale)
   end
 end

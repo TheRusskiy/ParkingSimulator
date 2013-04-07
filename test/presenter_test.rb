@@ -11,7 +11,7 @@ class PresenterTest < MiniTest::Unit::TestCase
   @app = Qt::Application.new(ARGV)
 
   def setup
-    @presenter = Presenter.new(ParkingView.new)
+    @presenter = Presenter.new(ParkingView.new(Qt::GraphicsScene.new))
     @road = Road.new
     @car = Car.new
     @car.move_to @road

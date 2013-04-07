@@ -7,9 +7,9 @@ class Window < Qt::Widget
 
   def initialize()
 		super
-    @view = ParkingView.new
+    @view = ParkingView.new(Qt::GraphicsScene.new)
     self.layout = Qt::GridLayout.new do |l|
-      l.addWidget(view, 0, 0)
+      l.addWidget(@view, 0, 0)
       l.addWidget(createGridGroupBox)
     end
     adjustWindowSize()

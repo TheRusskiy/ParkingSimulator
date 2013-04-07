@@ -1,25 +1,28 @@
 class GraphicCar < Qt::GraphicsItem
   def initialize()
     super(nil)
-    @angle = 0.0
-    @speed = 0.0
-    @mouseEyeDirection = 0.0
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
     #rotate(rand(360))
-    rotate(-5)
+    #rotate(-5)
     adjust = 0.5
     @boundingRect = Qt::RectF.new(-20 - adjust, -22 - adjust,
                                   40 + adjust, 83 + adjust)
+    @color = Qt::Color.new(rand(256), rand(256), rand(256))
+    @brush = Qt::Brush.new(@color)
   end
+
   def boundingRect
     return @boundingRect
   end
+
   def paint(painter, arg, widget)
-    @color = Qt::Color.new(rand(256), rand(256), rand(256))
-    painter.brush = Qt::Brush.new(@color)
-    painter.drawRect(0,0, 10, 20)
-    puts('inside paint')
+
+    painter.brush = @brush
+    painter.drawRect(0,0, 5, 2)
+    #setVisible(true)
+    #setPos(rand(100), rand(100))
     #painter.drawRect(0,30, 10, 20)
+    #painter.drawText(0, 0, "dsasda")
 
     ## Body
     #painter.brush = Qt::Brush.new(@color)
