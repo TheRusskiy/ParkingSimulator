@@ -4,7 +4,6 @@ MiniTest::Reporters.use! MiniTest::Reporters::RubyMineReporter.new
 
 class TestTickThread < MiniTest::Unit::TestCase
   require '../src/tick_thread'
-  require '../src/needs_set_up'
   def setup
     @tt = TickThread.new
   end

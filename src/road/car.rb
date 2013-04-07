@@ -1,7 +1,6 @@
-
 class Car
-  require '../src/coordinate'
-  require '../src/state'
+  require_relative 'coordinate'
+  require_relative 'state'
   attr_accessor :coordinate
   attr_reader :state
 

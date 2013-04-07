@@ -3,7 +3,7 @@ require 'minitest/reporters'
 MiniTest::Reporters.use! MiniTest::Reporters::RubyMineReporter.new
 
 class TestCarGenerator < MiniTest::Unit::TestCase
-  require '../src/car_generator'
+  require '../src/road/car_generator'
   def setup
     seed=1
     @uniform = CarGenerator.uniform(100, seed)

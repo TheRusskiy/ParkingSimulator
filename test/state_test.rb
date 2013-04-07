@@ -3,7 +3,7 @@ require 'minitest/reporters'
 MiniTest::Reporters.use! MiniTest::Reporters::RubyMineReporter.new
 
 class StateTest < MiniTest::Unit::TestCase
-  require '../src/state'
+  require '../src/road/state'
 
   def setup
     # Do nothing

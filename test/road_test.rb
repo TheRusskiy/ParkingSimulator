@@ -4,10 +4,10 @@ require 'awesome_print'
 MiniTest::Reporters.use! MiniTest::Reporters::RubyMineReporter.new
 
 class RoadTest < MiniTest::Unit::TestCase
-  require '../src/road'
-  require '../src/car'
-  require '../src/distance_calculator'
-  require '../src/coordinate'
+  require '../src/road/road'
+  require '../src/road/car'
+  require '../src/road/distance_calculator'
+  require '../src/road/coordinate'
 
   def setup
     @road = Road.new()

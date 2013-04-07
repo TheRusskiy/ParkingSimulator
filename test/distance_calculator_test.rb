@@ -3,9 +3,9 @@ require 'minitest/reporters'
 MiniTest::Reporters.use! MiniTest::Reporters::RubyMineReporter.new
 
 class DistanceCalculatorTest < MiniTest::Unit::TestCase
-  require '../src/distance_calculator'
-  require '../src/coordinate'
-  require '../src/car'
+  require '../src/road/distance_calculator'
+  require '../src/road/coordinate'
+  require '../src/road/car'
   include Math
   def setup
     # Do nothing

@@ -3,9 +3,9 @@ require 'minitest/reporters'
 MiniTest::Reporters.use! MiniTest::Reporters::RubyMineReporter.new
 
 class CarTest < MiniTest::Unit::TestCase
-  require '../src/car'
-  require '../src/road'
-  require '../src/coordinate'
+  require '../src/road/car'
+  require '../src/road/road'
+  require '../src/road/coordinate'
 
   def setup
     @car = Car.new

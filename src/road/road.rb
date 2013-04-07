@@ -1,8 +1,8 @@
 class Road
-  require '../src/state'
-  require '../src/distance_calculator'
+  require_relative 'state'
+  require_relative 'distance_calculator'
+  require_relative '../exceptions/accident'
   require 'awesome_print'
-  require '../src/accident'
   include Math
   attr_reader :length
   attr_reader :cars

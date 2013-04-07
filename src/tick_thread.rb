@@ -1,5 +1,5 @@
 class TickThread
-  require '../src/needs_set_up'
+  require '../src/exceptions/needs_set_up'
   require 'thread'
   attr_reader :working
   attr_accessor :paused
