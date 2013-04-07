@@ -3,9 +3,11 @@ require_relative 'parkingview'
 	
 class Window < Qt::Widget
 
-  def initialize(parent = nil)
+  attr_reader :view
+
+  def initialize()
 		super
-    view = ParkingView.new
+    @view = ParkingView.new
     self.layout = Qt::GridLayout.new do |l|
       l.addWidget(view, 0, 0)
       l.addWidget(createGridGroupBox)

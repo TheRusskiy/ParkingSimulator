@@ -34,6 +34,18 @@ class DistanceCalculatorTest < MiniTest::Unit::TestCase
     assert_in_delta(DistanceCalculator.slope_between(c1, c2), 0, 0.01)
   end
 
+  def test_angle_between()
+    c1=Coordinate.new(0, 0)
+    c2=Coordinate.new(1, 1)
+    assert_in_delta(DistanceCalculator.angle_between(c1, c2), 45, 0.01)
+    c1=Coordinate.new(0, 0)
+    c2=Coordinate.new(1, 0)
+    assert_in_delta(DistanceCalculator.angle_between(c1, c2), 0, 0.01)
+    c1=Coordinate.new(0, 0)
+    c2=Coordinate.new(0, 1)
+    assert_in_delta(DistanceCalculator.angle_between(c1, c2), 90, 0.01)
+  end
+
   def test_is_safe_between()
     car1=Car.new
     car2=Car.new

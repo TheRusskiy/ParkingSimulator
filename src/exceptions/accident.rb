@@ -1,3 +1,0 @@
-class Accident < Exception
-
-end

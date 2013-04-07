@@ -77,7 +77,7 @@ class RoadTest < MiniTest::Unit::TestCase
 
   def test_cant_be_on_each_other
     @car2=Car.new
-    assert_raises (Accident) {@car2.move_to(@road)}
+    assert_raises (AccidentException) {@car2.move_to(@road)}
   end
 
   def test_does_not_depend_on_direction
@@ -90,8 +90,10 @@ class RoadTest < MiniTest::Unit::TestCase
   end
 
   def test_goes_out_of_road
+    assert_equal @car.placement, @road
     @road.move_car_by(@car, @road.length)
     refute_includes(@road.cars, @car)
+    refute_equal @car.placement, @road
   end
 
   def test_same_state_for_car
@@ -99,6 +101,14 @@ class RoadTest < MiniTest::Unit::TestCase
     state1 = @road.get_state(@car)
     state2 = @road.get_state(@car)
     assert_same(state1, state2)
+  end
+
+  def test_cannot_have_two_identical_cars
+    assert_raises (CarAddedTwiceException) {@car.move_to(@road)}
+  end
+
+  def test_rotation
+    assert_equal(@car.state.rotation,@road.angle)
   end
 
 

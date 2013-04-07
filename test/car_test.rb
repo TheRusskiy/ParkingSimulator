@@ -23,7 +23,7 @@ class CarTest < MiniTest::Unit::TestCase
   end
 
   def test_car_can_move_to_road
-    assert_equal(@car.get_placement, @road)
+    assert_equal(@car.placement, @road)
   end
 
   def test_available_space

@@ -62,7 +62,7 @@ class TestTickThread < MiniTest::Unit::TestCase
   end
 
   def test_raises_if_no_frequency_or_job
-    assert_raises(NeedsSetUp) {@tt.start.must_raise}
+    assert_raises(NeedsSetUpException) {@tt.start.must_raise}
   end
 
 
