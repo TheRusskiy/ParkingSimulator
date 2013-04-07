@@ -46,4 +46,8 @@ class CarTest < MiniTest::Unit::TestCase
     @state =  @road.get_state(@car)
     assert_equal previous_space-10, @state.get_available_space
   end
+
+  def test_car_has_state
+    @car.state.wont_be_nil
+  end
 end

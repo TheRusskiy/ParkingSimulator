@@ -1,10 +1,12 @@
 
 class Car
   require '../src/coordinate'
+  require '../src/state'
   attr_accessor :coordinate
+  attr_reader :state
 
-  def initialize()
-
+  def initialize
+    @state = State.new
   end
 
   def move_to(placement)

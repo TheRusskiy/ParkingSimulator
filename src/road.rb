@@ -17,7 +17,7 @@ class Road
   end
 
   def get_state(car)
-    state= State.new
+    state= car.state
     beetween_car_and_end = DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])
     state.set_available_space(beetween_car_and_end)
     if @cars.length>1

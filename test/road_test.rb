@@ -94,5 +94,12 @@ class RoadTest < MiniTest::Unit::TestCase
     refute_includes(@road.cars, @car)
   end
 
+  def test_same_state_for_car
+  # for perfomance!
+    state1 = @road.get_state(@car)
+    state2 = @road.get_state(@car)
+    assert_same(state1, state2)
+  end
+
 
 end
