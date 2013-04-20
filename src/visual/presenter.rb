@@ -68,7 +68,6 @@ class Presenter
     car.draw_item.setPos(x(car.coordinate), y(car.coordinate))
     car.draw_item.setRotation(car.state.rotation/Math::PI*180.0)
     car.draw_item.setScale(@scale)
-    #car.draw_item.setRotation(car.state.rotation) todo
   end
 
   def draw_road(road)

@@ -1,7 +1,7 @@
 require 'Qt'
 require 'awesome_print'
-require '../src/visual/window'
-require '../src/core'
+require_relative '../src/visual/window'
+require_relative '../src/core'
 
 app = Qt::Application.new(ARGV)
 window = Window.new

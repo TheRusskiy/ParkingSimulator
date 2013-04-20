@@ -1,5 +1,5 @@
 require_relative 'GraphicCar'
-require_relative 'mouse'
+#require_relative 'mouse'
 
 class ParkingView < Qt::GraphicsView
   attr_reader :scene

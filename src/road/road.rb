@@ -55,8 +55,6 @@ class Road
   end
 
   def move_car_by(car, by_space)
-    @x_sign = @coordinates[:end].get_x-car.coordinate.get_x > 0 ? 1 : -1
-    @y_sign = @coordinates[:end].get_y-car.coordinate.get_y > 0 ? 1 : -1
     dx = by_space*@cosine
     dy = by_space*@sinus
     if by_space>=DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])

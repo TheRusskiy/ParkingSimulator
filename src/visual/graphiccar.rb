@@ -2,9 +2,8 @@ class GraphicCar < Qt::GraphicsItem
   def initialize()
     super(nil)
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
-    #rotate(rand(360))
-    #rotate(-5)
     adjust = 0.5
+    # todo
     @boundingRect = Qt::RectF.new(-20 - adjust, -22 - adjust,
                                   40 + adjust, 83 + adjust)
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
