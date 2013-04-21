@@ -19,6 +19,8 @@ class Car
   end
 
   def move_by(space)
+    state = @placement.get_state(self)
+    if state.get_available_space<space; space = state.get_available_space end
     @placement.move_car_by(self, space)
     #if @placement; @state=@placement.get_state(self) end
   end

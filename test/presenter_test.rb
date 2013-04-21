@@ -82,7 +82,5 @@ class PresenterTest < MiniTest::Unit::TestCase
     refute @presenter.contains? @car
   end
 
-  #def test_road_can_
-
 end
       

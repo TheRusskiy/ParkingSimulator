@@ -7,7 +7,6 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
   require '../src/road/car'
   require '../src/road/distance_calculator'
   require '../src/road/coordinate'
-  require '../src/road/parking_entrance'
   def setup
     @road = Road.new
     @car = Car.new
@@ -40,6 +39,22 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
     @car.move_by(10)
     refute @road.has_car? @car
     assert @parking.has_car? @car
+  end
+
+  def test_car_does_not_move_if_occupied
+    @car.wants_to_park=true
+    @car.move_by(40)
+    refute @road.has_car? @car
+    car2=Car.new
+    car2.wants_to_park=true
+    car2.move_to @road
+    car2.move_by(40)
+    assert @road.has_car? car2
+    refute @parking.has_car? car2
+    @car.move_by 5
+    car2.move_by 1
+    refute @road.has_car? car2
+    assert @parking.has_car? car2
   end
 
 end

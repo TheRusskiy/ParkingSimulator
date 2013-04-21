@@ -5,8 +5,7 @@ class Road
   require_relative '../exceptions/car_added_twice_exception'
   require 'awesome_print'
   include Math
-  attr_reader :length
-  attr_reader :cars, :slope, :angle
+  attr_reader :length, :cars, :angle, :safe_gap
 
   def initialize(c1=Coordinate.new(100, 100), c2=Coordinate.new(0, 100))
     @cars = Array.new
@@ -17,6 +16,7 @@ class Road
     @angle = DistanceCalculator.angle_between(c1, c2)
     @sinus = Math.sin(@angle)
     @cosine = Math.cos(@angle)
+    @safe_gap=1
   end
 
 
@@ -36,7 +36,7 @@ class Road
 
   def free_space?()
     for existing_car in @cars
-      return false unless DistanceCalculator.is_safe_between?(existing_car, @coordinates[:start])
+      return false unless DistanceCalculator.is_safe_between?(existing_car, @coordinates[:start], @safe_gap)
     end
     return true
   end
@@ -44,7 +44,7 @@ class Road
   def add_car(car)
     if @cars.include?(car); raise CarAddedTwiceException end
     for existing_car in @cars
-      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car, car)
+      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car, car, @safe_gap)
     end
     @cars << car
     car.coordinate=@coordinates[:start]
@@ -56,14 +56,14 @@ class Road
   end
 
   def move_car_by(car, by_space)
-    if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)+by_space-distance_to_parking_entrance>=0)
+    dx = by_space*@cosine
+    dy = by_space*@sinus
+    car.coordinate=Coordinate.new(car.coordinate.x+dx, car.coordinate.y+dy)
+
+    if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0)
       move_car_to_parking(car)
-    elsif by_space>=DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])
+    elsif DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])>=@length
       move_car_to_extension(car)
-    else
-      dx = by_space*@cosine
-      dy = by_space*@sinus
-      car.coordinate=Coordinate.new(car.coordinate.x+dx, car.coordinate.y+dy)
     end
   end
 
@@ -106,23 +106,25 @@ class Road
       other_car_to_end = DistanceCalculator.distance_between(other_car.coordinate, @coordinates[:end])
       # if END < CurrDist < OtherCar < MyCar : CurrDist=OtherCar
       if other_car!=my_car and other_car_to_end<my_car_to_end and other_car_to_end>current_distance
-        current_distance=other_car_to_end
+        current_distance=other_car_to_end+other_car.length+@safe_gap # '+' because method returns '-current_distance'
       end
     end
     return my_car_to_end - current_distance
   end
 
   def move_car_to_parking(car)
+    return unless @parking_entrance.free_space?
     car.move_to @parking_entrance
     @cars.delete(car)
   end
 
   def move_car_to_extension(car)
-    @cars.delete(car)
-    car.placement=@extension
     if @extension;
+      return unless @extension.free_space?
       car.move_to @extension
     end
+    @cars.delete(car)
+    car.placement=@extension
   end
 
 end

@@ -8,7 +8,6 @@ class RoadTest < MiniTest::Unit::TestCase
   require '../src/road/car'
   require '../src/road/distance_calculator'
   require '../src/road/coordinate'
-  require '../src/road/parking_entrance'
 
   def setup
     @road = Road.new()
@@ -62,7 +61,7 @@ class RoadTest < MiniTest::Unit::TestCase
     @car2.move_to(@road)
     @state = @road.get_state(@car2)
     @state.get_available_space.wont_be_nil
-    assert_in_delta @state.get_available_space, 10, 0.01
+    assert_in_delta @state.get_available_space, 10-@road.safe_gap-@car.length, 0.01
   end
 
   def test_available_space_for_2_cars_in_dynamic
@@ -70,10 +69,10 @@ class RoadTest < MiniTest::Unit::TestCase
     @car2=Car.new
     @car2.move_to(@road)
     @state = @road.get_state(@car2)
-    assert_in_delta @state.get_available_space, 20, 0.01
+    assert_in_delta @state.get_available_space, 20-@road.safe_gap-@car.length, 0.01
     @car2.move_by(10)
     @state = @road.get_state(@car2)
-    assert_in_delta @state.get_available_space, 10, 0.01
+    assert_in_delta @state.get_available_space, 10-@road.safe_gap-@car.length, 0.01
   end
 
   def test_cant_be_on_each_other
@@ -137,6 +136,19 @@ class RoadTest < MiniTest::Unit::TestCase
     @car.move_by(100)
     refute @road.has_car? @car
     assert road2.has_car? @car
+  end
+
+  def test_if_car_ahead_adjust_speed
+    road = Road.new(@c1, @c2)
+    car = Car.new
+    car.move_to(road)
+    car2=Car.new
+    car.move_by 10
+    car2.move_to(road)
+    assert_equal DistanceCalculator.distance_between(@c1, car.coordinate), 10
+    assert_equal DistanceCalculator.distance_between(@c1, car2.coordinate), 0
+    car2.move_by 20
+    assert_equal DistanceCalculator.distance_between(@c1, car2.coordinate), 10-road.safe_gap-car.length
   end
 
   def test_cant_go_to_occupied_road

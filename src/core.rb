@@ -4,7 +4,6 @@ require '../src/road/coordinate'
 require '../src/timer_thread'
 require '../src/visual/presenter'
 class Core
-  #@view
   def initialize(view)
     @cars = Array.new
     @view=view
@@ -24,13 +23,13 @@ class Core
 
     @generator = CarGenerator.uniform(20)
     @tick_thread = TimerThread.new
-    @presenter = Presenter.new(view, 1)
+    @presenter = Presenter.new(view, 4)
 
     @presenter.add(@road)
     @presenter.add(@road2)
     @presenter.add(@entrance)
 
-    @tick_thread.set_frequency(30)
+    @tick_thread.set_frequency(60)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
   end
@@ -45,7 +44,7 @@ class Core
       @presenter.add(car)
     end
     for car in @cars
-      car.move_by(2)
+      car.move_by(1)
       if car.placement.nil?; @cars.delete(car); end;
     end
     @view.show
