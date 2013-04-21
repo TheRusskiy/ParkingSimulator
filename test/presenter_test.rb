@@ -73,9 +73,16 @@ class PresenterTest < MiniTest::Unit::TestCase
   end
 
   def test_deletes_car_without_placement
-    skip()
-  # todo
+    @presenter.add(@car)
+    assert @road.has_car? @car
+    assert @presenter.contains? @car
+    @car.move_by(100)
+    @presenter.redraw
+    refute @road.has_car? @car
+    refute @presenter.contains? @car
   end
+
+  #def test_road_can_
 
 end
       

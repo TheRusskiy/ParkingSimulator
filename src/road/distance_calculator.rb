@@ -1,16 +1,21 @@
 class DistanceCalculator
   include Math
-  $SAFE_CAR_DISTANCE = 5
+  $SAFE_CAR_DISTANCE = 1
   def self.distance_between(c1, c2)
-    Math.sqrt((c1.get_x-c2.get_x)**2 + (c1.get_y-c2.get_y)**2)
+    Math.sqrt((c1.x-c2.x)**2 + (c1.y-c2.y)**2)
   end
 
   def self.angle_between(c1, c2)
-    Math.atan2(Float(c2.get_y-c1.get_y),Float(c2.get_x-c1.get_x)) #* 180 / Math::PI
+    Math.atan2(Float(c2.y-c1.y),Float(c2.x-c1.x)) #* 180 / Math::PI
   end
 
-  def self.is_safe_between?(coord1, coord2)
-    if distance_between(coord1, coord2)<$SAFE_CAR_DISTANCE
+  def self.is_safe_between?(car_in_front, behind, gap = 1)
+    if behind.respond_to? :coordinate
+      coord_behind = behind.coordinate
+    else
+      coord_behind = behind
+    end
+    if distance_between(car_in_front.coordinate, coord_behind)<car_in_front.length+gap
       return false
     else
       return true

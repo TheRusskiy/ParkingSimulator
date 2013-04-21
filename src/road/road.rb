@@ -7,6 +7,7 @@ class Road
   include Math
   attr_reader :length
   attr_reader :cars, :slope, :angle
+
   def initialize(c1=Coordinate.new(100, 100), c2=Coordinate.new(0, 100))
     @cars = Array.new
     @coordinates = Hash.new
@@ -18,6 +19,7 @@ class Road
     @cosine = Math.cos(@angle)
   end
 
+
   def get_state(car)
     state= car.state
     beetween_car_and_end = DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])
@@ -28,25 +30,24 @@ class Road
     return state
   end
 
+  def distance_from_beginning(car)
+    DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])
+  end
+
   def free_space?()
     for existing_car in @cars
-      return false unless DistanceCalculator.is_safe_between?(existing_car.coordinate, @coordinates[:start])
+      return false unless DistanceCalculator.is_safe_between?(existing_car, @coordinates[:start])
     end
     return true
   end
 
   def add_car(car)
-    if @cars.include?(car); raise CarAddedTwiceException; end
+    if @cars.include?(car); raise CarAddedTwiceException end
     for existing_car in @cars
-      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car.coordinate, car.coordinate)
+      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car, car)
     end
     @cars << car
     car.coordinate=@coordinates[:start]
-    #if @coordinates[:start].get_y - @coordinates[:end].get_y > 0
-    #  car.state.rotation = - @angle
-    #else
-    #  car.state.rotation = @angle
-    #end
     car.state.rotation = @angle
   end
 
@@ -55,18 +56,46 @@ class Road
   end
 
   def move_car_by(car, by_space)
-    dx = by_space*@cosine
-    dy = by_space*@sinus
-    if by_space>=DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])
-      @cars.delete(car)
-      car.placement=nil
+    if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)+by_space-distance_to_parking_entrance>=0)
+      move_car_to_parking(car)
+    elsif by_space>=DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])
+      move_car_to_extension(car)
+    else
+      dx = by_space*@cosine
+      dy = by_space*@sinus
+      car.coordinate=Coordinate.new(car.coordinate.x+dx, car.coordinate.y+dy)
     end
-    car.coordinate=Coordinate.new(car.coordinate.get_x+dx, car.coordinate.get_y+dy)
   end
 
-  def get_coordinate(coord_name)
+  def coordinates(coord_name)
     @coordinates[coord_name]
   end
+
+  def extension=(extension)
+    @extension=extension
+  end
+
+  def extension
+    @extension
+  end
+
+  def add_parking_entrance(entrance, distance_from_start)
+    @parking_entrance=entrance
+    @parking_entrance_distance = distance_from_start
+    #dx = @parking_entrance_distance*@cosine
+    #dy = @parking_entrance_distance*@sinus
+    #@parking_entrance.set_start(Coordinate.new(dx+@coordinates[:start].x, dy+@coordinates[:start].y))
+  end
+
+  def parking_entrance
+    @parking_entrance
+  end
+
+  def distance_to_parking_entrance
+    @parking_entrance_distance
+  end
+
+
 
   #____P_R_I_V_A_T_E_____#
   private
@@ -81,5 +110,19 @@ class Road
       end
     end
     return my_car_to_end - current_distance
-   end
+  end
+
+  def move_car_to_parking(car)
+    car.move_to @parking_entrance
+    @cars.delete(car)
+  end
+
+  def move_car_to_extension(car)
+    @cars.delete(car)
+    car.placement=@extension
+    if @extension;
+      car.move_to @extension
+    end
+  end
+
 end

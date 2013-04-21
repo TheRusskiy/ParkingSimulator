@@ -8,6 +8,7 @@ class RoadTest < MiniTest::Unit::TestCase
   require '../src/road/car'
   require '../src/road/distance_calculator'
   require '../src/road/coordinate'
+  require '../src/road/parking_entrance'
 
   def setup
     @road = Road.new()
@@ -43,14 +44,14 @@ class RoadTest < MiniTest::Unit::TestCase
   end
 
   def test_has_coordinate
-    @road.get_coordinate(:start)
+    @road.coordinates(:start)
   end
 
   def test_move_car_by
     car = Car.new
     road = Road.new
     car.move_to(road)
-    old_coord=car.coordinate
+    old_coord=Coordinate.new(car.coordinate.x, car.coordinate.y)
     road.move_car_by(car, 20)
     assert_in_delta(DistanceCalculator.distance_between(old_coord, car.coordinate), 20, 0.01)
   end
@@ -109,6 +110,37 @@ class RoadTest < MiniTest::Unit::TestCase
 
   def test_rotation
     assert_equal(@car.state.rotation,@road.angle)
+  end
+
+  def test_distance_from_beginning
+    assert_equal @road.distance_from_beginning(@car), 0
+    @car.move_by 30
+    assert_equal @road.distance_from_beginning(@car), 30
+  end
+
+  def test_can_connect_2_roads
+    c2_1 = Coordinate.new(100, 100)
+    c2_2 = Coordinate.new(100, 200)
+    road2 = Road.new(c2_1, c2_2)
+    assert @road.extension.nil?
+    @road.extension=road2
+    assert_same @road.extension, road2
+  end
+
+  def test_car_travels_to_extension
+    c2_1 = Coordinate.new(100, 100)
+    c2_2 = Coordinate.new(100, 200)
+    road2 = Road.new(c2_1, c2_2)
+    @road.extension=road2
+    assert @road.has_car? @car
+    refute road2.has_car? @car
+    @car.move_by(100)
+    refute @road.has_car? @car
+    assert road2.has_car? @car
+  end
+
+  def test_cant_go_to_occupied_road
+    skip
   end
 
 

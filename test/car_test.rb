@@ -36,9 +36,8 @@ class CarTest < MiniTest::Unit::TestCase
 
   def test_gets_road_coordinate
     @car.coordinate.wont_be_nil
-    assert_equal @road.get_coordinate(:start), @car.coordinate
+    assert_equal @road.coordinates(:start), @car.coordinate
   end
-
 
   def test_car_can_move
     previous_space = @state.get_available_space

@@ -1,5 +1,6 @@
 class Presenter
   require_relative 'GraphicCar'
+  require_relative 'GraphicRoad'
   require '../src/road/car'
   require 'Qt'
   attr_reader :scene
@@ -38,10 +39,15 @@ class Presenter
     @objects << object
     case object.class.name
       when 'Road'
-        object.draw_item = GraphicCar.new
+        object.draw_item = GraphicRoad.new(object.coordinates(:start).x,
+                                           object.coordinates(:start).y,
+                                           object.coordinates(:end).x,
+                                           object.coordinates(:end).y)
+        object.draw_item.setScale(@scale)
         @scene.addItem(object.draw_item)
       when 'Car'
         object.draw_item = GraphicCar.new
+        object.draw_item.setScale(@scale)
         @scene.addItem(object.draw_item)
     end
   end
@@ -65,13 +71,18 @@ class Presenter
   end
 
   def draw_car(car)
+    if car.placement.nil?
+      @scene.removeItem(car.draw_item)
+      @objects.delete(car)
+      return
+    end
     car.draw_item.setPos(x(car.coordinate), y(car.coordinate))
     car.draw_item.setRotation(car.state.rotation/Math::PI*180.0)
     car.draw_item.setScale(@scale)
   end
 
   def draw_road(road)
-    
+    road.draw_item.setScale(@scale)
   end
 
   def contains?(object_to_find)
@@ -79,10 +90,10 @@ class Presenter
   end
 
   def x(coordinate)
-    Integer(coordinate.get_x*@scale)
+    Integer(coordinate.x*@scale)
   end
 
   def y(coordinate)
-    Integer(coordinate.get_y*@scale)
+    Integer(coordinate.y*@scale)
   end
 end

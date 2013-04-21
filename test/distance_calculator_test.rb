@@ -45,8 +45,8 @@ class DistanceCalculatorTest < MiniTest::Unit::TestCase
     car1.coordinate=Coordinate.new(0, 0)
     car2.coordinate=Coordinate.new(3, 3)
     car3.coordinate=Coordinate.new(3, 4)
-    DistanceCalculator.is_safe_between?(car1.coordinate, car2.coordinate).must_equal false
-    DistanceCalculator.is_safe_between?(car1.coordinate, car3.coordinate).must_equal true
+    DistanceCalculator.is_safe_between?(car1, car2).must_equal false
+    DistanceCalculator.is_safe_between?(car1, car3).must_equal true
   end
 
 end

@@ -4,8 +4,9 @@ class GraphicCar < Qt::GraphicsItem
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
     adjust = 0.5
     # todo
-    @boundingRect = Qt::RectF.new(-20 - adjust, -22 - adjust,
-                                  40 + adjust, 83 + adjust)
+    #@boundingRect = Qt::RectF.new(-20 - adjust, -22 - adjust,
+    #                              40 + adjust, 83 + adjust)
+    @boundingRect = Qt::RectF.new(0,0,5,5)
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
     @brush = Qt::Brush.new(@color)
   end

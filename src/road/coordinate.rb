@@ -4,12 +4,12 @@ class Coordinate
     @y=y
   end
 
-  def get_x
-    return @x
+  def x
+    @x
   end
 
-  def get_y
-    return @y
+  def y
+    @y
   end
 
   def new_with_x(x)
