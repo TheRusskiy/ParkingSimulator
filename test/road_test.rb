@@ -151,9 +151,4 @@ class RoadTest < MiniTest::Unit::TestCase
     assert_equal DistanceCalculator.distance_between(@c1, car2.coordinate), 10-road.safe_gap-car.length
   end
 
-  def test_cant_go_to_occupied_road
-    skip
-  end
-
-
 end

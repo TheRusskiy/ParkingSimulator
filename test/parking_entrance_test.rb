@@ -10,8 +10,8 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
   def setup
     @road = Road.new
     @car = Car.new
-    @parking = Road.new
-    @road.add_parking_entrance(@parking,40)
+    @proad = Road.new
+    @road.add_parking_entrance(@proad,40)
     @car.move_to @road
   end
 
@@ -21,7 +21,7 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
 
   def test_road_has_parking_entrance
     p2 = @road.parking_entrance
-    assert_same @parking, p2
+    assert_same @proad, p2
     assert_equal @road.distance_to_parking_entrance, 40
   end
 
@@ -35,10 +35,10 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
     @car.wants_to_park=true
     @car.move_by(30)
     assert @road.has_car? @car
-    refute @parking.has_car? @car
+    refute @proad.has_car? @car
     @car.move_by(10)
     refute @road.has_car? @car
-    assert @parking.has_car? @car
+    assert @proad.has_car? @car
   end
 
   def test_car_does_not_move_if_occupied
@@ -50,11 +50,11 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
     car2.move_to @road
     car2.move_by(40)
     assert @road.has_car? car2
-    refute @parking.has_car? car2
+    refute @proad.has_car? car2
     @car.move_by 5
     car2.move_by 1
     refute @road.has_car? car2
-    assert @parking.has_car? car2
+    assert @proad.has_car? car2
   end
 
 end

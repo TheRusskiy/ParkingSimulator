@@ -5,8 +5,10 @@ class Car
   attr_accessor :placement
   attr_reader :state
   attr_reader :length
+  attr_reader :assigned_spot
 
   def initialize
+    @assigned_spot = nil
     @length=4
     @state = State.new
     @wants_to_park = false
@@ -31,6 +33,11 @@ class Car
 
   def wants_to_park=(value)
     @wants_to_park=value
+  end
+
+  def assigned_spot=(spot)
+    @assigned_spot=spot
+    spot.assigned_car= self
   end
 
 end

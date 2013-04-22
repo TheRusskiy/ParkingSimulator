@@ -6,6 +6,7 @@ class Road
   require 'awesome_print'
   include Math
   attr_reader :length, :cars, :angle, :safe_gap
+  attr_accessor :parking_lot
 
   def initialize(c1=Coordinate.new(100, 100), c2=Coordinate.new(0, 100))
     @cars = Array.new
@@ -18,7 +19,6 @@ class Road
     @cosine = Math.cos(@angle)
     @safe_gap=1
   end
-
 
   def get_state(car)
     state= car.state
@@ -49,6 +49,7 @@ class Road
     @cars << car
     car.coordinate=@coordinates[:start]
     car.state.rotation = @angle
+    assign_parking_spot(car)
   end
 
   def has_car?(car)
@@ -56,10 +57,7 @@ class Road
   end
 
   def move_car_by(car, by_space)
-    dx = by_space*@cosine
-    dy = by_space*@sinus
-    car.coordinate=Coordinate.new(car.coordinate.x+dx, car.coordinate.y+dy)
-
+    move_car(by_space, car)
     if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0)
       move_car_to_parking(car)
     elsif DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])>=@length
@@ -112,6 +110,12 @@ class Road
     return my_car_to_end - current_distance
   end
 
+  def move_car(by_space, car)
+    dx = by_space*@cosine
+    dy = by_space*@sinus
+    car.coordinate=Coordinate.new(car.coordinate.x+dx, car.coordinate.y+dy)
+  end
+
   def move_car_to_parking(car)
     return unless @parking_entrance.free_space?
     car.move_to @parking_entrance
@@ -125,6 +129,12 @@ class Road
     end
     @cars.delete(car)
     car.placement=@extension
+  end
+
+  def assign_parking_spot(car)
+    if car.wants_to_park? and car.assigned_spot.nil? and @parking_lot
+      @parking_lot.assign_spot(car)
+    end
   end
 
 end

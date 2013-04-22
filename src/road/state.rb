@@ -3,6 +3,7 @@ class State
 
   def initialize
     @rotation=0
+    @parked = false
   end
 
   def set_available_space(space)
@@ -11,5 +12,13 @@ class State
 
   def get_available_space
     return @space
+  end
+
+  def parked?
+    @parked
+  end
+
+  def parked=(value)
+    @parked=value
   end
 end
