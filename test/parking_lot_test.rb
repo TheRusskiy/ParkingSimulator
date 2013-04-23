@@ -110,7 +110,6 @@ class ParkingLotTest < MiniTest::Unit::TestCase
       Car.new.move_to spot
     end
     refute lot.has_free_spots?
-
   end
 
 end

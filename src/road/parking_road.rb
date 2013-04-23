@@ -68,9 +68,9 @@ class ParkingRoad < Road
     while DistanceCalculator.distance_between(fake.coordinate, @coordinates[:end])>$SPOT_LENGTH
       move_car($SPOT_LENGTH, fake)
       c1 = Coordinate.new(fake.coordinate.x-dx, fake.coordinate.y+dy)
-      p1 = ParkingSpot.new(fake.coordinate, c1, self, @angle)
+      p1 = ParkingSpot.new(fake.coordinate, c1, self, @angle, true)
       c2 = Coordinate.new(fake.coordinate.x+dx, fake.coordinate.y-dy)
-      p2 = ParkingSpot.new(fake.coordinate, c2, self, @angle)
+      p2 = ParkingSpot.new(fake.coordinate, c2, self, @angle, false)
       @spots<<p1
       @spots<<p2
     end
@@ -80,6 +80,9 @@ class ParkingRoad < Road
     attr_accessor :coordinate
     def initialize(coordinate)
       @coordinate=coordinate
+    end
+    def stopped?
+      false
     end
   end
 

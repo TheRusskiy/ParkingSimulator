@@ -1,6 +1,7 @@
 class ParkingSpot
   attr_reader :road
-  def initialize(entrance_coordinate, coordinate, owning_road, angle)
+  attr_reader :is_left
+  def initialize(entrance_coordinate, coordinate, owning_road, angle, is_left)
     @angle=angle
     @coordinates=Hash.new
     @coordinates[:end]=coordinate
@@ -8,6 +9,7 @@ class ParkingSpot
     @car = nil
     @assigned_car = nil
     @road = owning_road
+    @is_left=is_left
   end
 
   def coordinates(coord_name)

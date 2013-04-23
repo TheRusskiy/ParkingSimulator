@@ -12,6 +12,7 @@ class Car
     @length=4
     @state = State.new
     @wants_to_park = false
+    @stopped = false
   end
 
   def move_to(placement)
@@ -33,6 +34,14 @@ class Car
 
   def wants_to_park=(value)
     @wants_to_park=value
+  end
+
+  def stopped?
+    @stopped
+  end
+
+  def stopped=(value)
+    @stopped=value
   end
 
   def assigned_spot=(spot)

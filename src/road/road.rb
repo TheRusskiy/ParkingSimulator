@@ -111,20 +111,31 @@ class Road
   end
 
   def move_car(by_space, car)
+    if car.stopped?
+      return
+    end
     dx = by_space*@cosine
     dy = by_space*@sinus
     car.coordinate=Coordinate.new(car.coordinate.x+dx, car.coordinate.y+dy)
   end
 
   def move_car_to_parking(car)
-    return unless @parking_entrance.free_space?
+    unless @parking_entrance.free_space?
+      car.stopped=true
+      return
+    end
+    car.stopped=false
     car.move_to @parking_entrance
     @cars.delete(car)
   end
 
   def move_car_to_extension(car)
     if @extension;
-      return unless @extension.free_space?
+      unless @extension.free_space?
+        car.stopped=true
+        return
+      end
+      car.stopped=false
       car.move_to @extension
     end
     @cars.delete(car)
