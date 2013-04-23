@@ -34,9 +34,9 @@ class Road
     DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])
   end
 
-  def free_space?()
+  def free_space?(coordinate = @coordinates[:start])
     for existing_car in @cars
-      return false unless DistanceCalculator.is_safe_between?(existing_car, @coordinates[:start], @safe_gap)
+      return false unless DistanceCalculator.is_safe_between?(existing_car, coordinate, @safe_gap)
     end
     return true
   end

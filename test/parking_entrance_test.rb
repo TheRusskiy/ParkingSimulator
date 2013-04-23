@@ -27,12 +27,12 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
 
   def test_car_wants_to_park
     refute @car.wants_to_park?
-    @car.wants_to_park=true
+    @car.wants_to_park 1
     assert @car.wants_to_park?
   end
 
   def test_goes_to_parking
-    @car.wants_to_park=true
+    @car.wants_to_park 1
     @car.move_by(30)
     assert @road.has_car? @car
     refute @proad.has_car? @car
@@ -42,11 +42,11 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
   end
 
   def test_car_does_not_move_if_occupied
-    @car.wants_to_park=true
+    @car.wants_to_park 1
     @car.move_by(40)
     refute @road.has_car? @car
     car2=Car.new
-    car2.wants_to_park=true
+    car2.wants_to_park 1
     car2.move_to @road
     car2.move_by(40)
     assert @road.has_car? car2

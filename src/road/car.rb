@@ -11,7 +11,7 @@ class Car
     @assigned_spot = nil
     @length=4
     @state = State.new
-    @wants_to_park = false
+    @turns_to_wait = 0
     @stopped = false
   end
 
@@ -29,11 +29,15 @@ class Car
   end
 
   def wants_to_park?
-    @wants_to_park
+    @turns_to_wait>0
   end
 
-  def wants_to_park=(value)
-    @wants_to_park=value
+  def wants_to_park(value)
+    @turns_to_wait=value
+  end
+
+  def turn
+    @turns_to_wait=@turns_to_wait - 1
   end
 
   def stopped?
@@ -46,7 +50,7 @@ class Car
 
   def assigned_spot=(spot)
     @assigned_spot=spot
-    spot.assigned_car= self
+    if spot; spot.assigned_car= self; end
   end
 
 end

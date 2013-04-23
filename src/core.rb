@@ -29,7 +29,7 @@ class Core
     @presenter.add(@road2)
     @presenter.add(@entrance)
 
-    @tick_thread.set_frequency(60)
+    @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
   end
@@ -38,7 +38,7 @@ class Core
     car = @generator.next_car
     if car and @road.free_space?
       @cars<<car
-      if rand(2)==0; car.wants_to_park=true end
+      if rand(2)==0; car.wants_to_park 1 end
       puts "car"
       car.move_to(@road)
       @presenter.add(car)

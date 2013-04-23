@@ -53,7 +53,7 @@ class ParkingLotTest < MiniTest::Unit::TestCase
 
   def test_car_has_assigned_spot
     car = Car.new
-    car.wants_to_park = true
+    car.wants_to_park 1
     spot_count_before = @lot.free_spot_count
     assert car.assigned_spot.nil?
     car.move_to @road1
@@ -63,7 +63,7 @@ class ParkingLotTest < MiniTest::Unit::TestCase
 
   def test_car_can_be_parked
     car = Car.new
-    car.wants_to_park = true
+    car.wants_to_park 1
     car.move_to @road1
     assert @road1.has_car? car
     refute car.assigned_spot.has_car? car
@@ -79,7 +79,7 @@ class ParkingLotTest < MiniTest::Unit::TestCase
 
   def test_to_2nd_if_1st_filled
     car = Car.new
-    car.wants_to_park = true
+    car.wants_to_park 1
     spots = @road1.spots
     spots.each do |spot|
       Car.new.move_to spot
@@ -90,7 +90,7 @@ class ParkingLotTest < MiniTest::Unit::TestCase
 
   def test_gets_spot_when_enters
     car = Car.new
-    car.wants_to_park = true
+    car.wants_to_park 1
     assert car.assigned_spot.nil?
     car.move_to @entrance
     refute car.assigned_spot.nil?
@@ -110,6 +110,53 @@ class ParkingLotTest < MiniTest::Unit::TestCase
       Car.new.move_to spot
     end
     refute lot.has_free_spots?
+  end
+
+  def test_waits_n_turns
+    turns = 10
+    car = Car.new
+    car.wants_to_park(turns)
+    spot = ParkingSpot.new(@c3, @c3.new_with_x(@c3.x+5), @road1, 0, true)
+    car.assigned_spot = spot
+    car.move_to spot
+    refute car.assigned_spot.nil?
+    assert spot.has_car? car
+
+    (turns-1).times do
+      car.move_by(1)
+    end
+    refute car.assigned_spot.nil?
+    assert spot.has_car? car
+    assert car.wants_to_park?
+
+    car.move_by(1)
+    assert car.assigned_spot.nil?
+    refute spot.has_car? car
+    refute car.wants_to_park?
+    refute spot.assigned_car
+  end
+
+  def test_cant_leave_if_occupied
+    car = Car.new
+    car.wants_to_park 1
+    car.move_to @road1
+    car.move_by $SPOT_LENGTH*2
+    refute @road1.has_car? car
+    assert car.assigned_spot.has_car? car
+
+    car2 = Car.new
+    car2.move_to @road1
+    car2.move_by $SPOT_LENGTH*2
+
+    spot = car.assigned_spot
+    car.move_by(1)
+    refute @road1.has_car? car
+    assert spot.has_car? car
+
+    car2.move_by $SPOT_LENGTH
+    car.move_by(1)
+    assert @road1.has_car? car
+    refute spot.has_car? car
   end
 
 end
