@@ -99,17 +99,43 @@ class ParkingLotTest < MiniTest::Unit::TestCase
   def test_does_not_have_free_spots
     lot = ParkingLot.new
     entrance = Road.new(@c0, @c1)
-    road = ParkingRoad.new(@c1, @c2)
-    entrance.extension=road
+    parking_road = ParkingRoad.new(@c1, @c2)
+    entrance.extension=parking_road
     lot.set_entrance entrance
-    lot.add_road_segment road
+    lot.add_road_segment parking_road
     assert lot.has_free_spots?
 
-    spots = road.spots
+    spots = parking_road.spots
     spots.each do |spot|
       Car.new.move_to spot
     end
     refute lot.has_free_spots?
+  end
+
+  def test_car_cant_move_to_full_lot
+    lot = ParkingLot.new
+    entrance = Road.new(@c0, @c1)
+    parking_road = ParkingRoad.new(@c1, @c2)
+    entrance.extension=parking_road
+    lot.set_entrance entrance
+    lot.add_road_segment parking_road
+
+    spots = parking_road.spots
+    spots.each do |spot|
+      Car.new.move_to spot
+    end
+    refute lot.has_free_spots?
+
+    car = Car.new
+    road = Road.new
+    car.move_to road
+    road.add_parking_entrance entrance, 20
+    assert road.has_car? car
+
+    car.move_by 30
+    assert road.has_car? car
+    refute entrance.has_car? car
+    refute parking_road.has_car? car
   end
 
   def test_waits_n_turns
@@ -144,11 +170,11 @@ class ParkingLotTest < MiniTest::Unit::TestCase
     refute @road1.has_car? car
     assert car.assigned_spot.has_car? car
 
+    spot = car.assigned_spot
     car2 = Car.new
     car2.move_to @road1
-    car2.move_by $SPOT_LENGTH*2
+    car2.move_by $SPOT_LENGTH
 
-    spot = car.assigned_spot
     car.move_by(1)
     refute @road1.has_car? car
     assert spot.has_car? car

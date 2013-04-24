@@ -19,4 +19,9 @@ class Coordinate
   def new_with_y(y)
     return Coordinate.new(@x, y)
   end
+
+  def to_s
+    '('+Integer(x).to_s+':'+Integer(y).to_s+')'
+  end
+
 end

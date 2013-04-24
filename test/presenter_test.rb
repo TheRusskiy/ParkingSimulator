@@ -7,6 +7,8 @@ class PresenterTest < MiniTest::Unit::TestCase
   require '../src/visual/presenter'
   require '../src/visual/parkingview'
   require '../src/road/road'
+  require '../src/road/parking_road'
+  require '../src/road/parking_spot'
 
   @app = Qt::Application.new(ARGV)
 
@@ -15,6 +17,9 @@ class PresenterTest < MiniTest::Unit::TestCase
     @road = Road.new
     @car = Car.new
     @car.move_to @road
+    @c1 = Coordinate.new(60, 60)
+    @c2 = Coordinate.new(60, 0)
+    @entrance = ParkingRoad.new(@c1, @c2)
   end
 
   def teardown
@@ -80,6 +85,21 @@ class PresenterTest < MiniTest::Unit::TestCase
     @presenter.redraw
     refute @road.has_car? @car
     refute @presenter.contains? @car
+  end
+
+  def test_add_parking_spot
+    spot = ParkingSpot.new(@c1, @c2, @entrance, 30, true)
+    @presenter.add(spot)
+    spot.draw_item.wont_be_nil
+  end
+
+  def test_add_parking_road()
+    @presenter.add(@entrance)
+    @entrance.draw_item.wont_be_nil
+    length1 = @presenter.scene.items.length
+    @presenter.add(@entrance)
+    length2 = @presenter.scene.items.length
+    assert_equal length2-length1, @entrance.spot_count+1 #spots+road itself
   end
 
 end

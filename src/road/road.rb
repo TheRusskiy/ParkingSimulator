@@ -42,14 +42,18 @@ class Road
   end
 
   def add_car(car)
+    include_car car
+    car.coordinate=@coordinates[:start]
+    car.state.rotation = @angle
+    assign_parking_spot(car)
+  end
+
+  def include_car(car)
     if @cars.include?(car); raise CarAddedTwiceException end
     for existing_car in @cars
       raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car, car, @safe_gap)
     end
     @cars << car
-    car.coordinate=@coordinates[:start]
-    car.state.rotation = @angle
-    assign_parking_spot(car)
   end
 
   def has_car?(car)
@@ -58,7 +62,7 @@ class Road
 
   def move_car_by(car, by_space)
     move_car(by_space, car)
-    if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0)
+    if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0) and @parking_entrance.parking_lot.has_free_spots?
       move_car_to_parking(car)
     elsif DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])>=@length
       move_car_to_extension(car)

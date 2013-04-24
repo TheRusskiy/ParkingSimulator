@@ -1,7 +1,11 @@
 class Presenter
   require_relative 'GraphicCar'
   require_relative 'GraphicRoad'
-  require '../src/road/car'
+  require_relative 'GraphicParkingSpot'
+  require_relative '../road/car'
+  require_relative '../road/road'
+  require_relative '../road/parking_road'
+  require_relative '../road/parking_spot'
   require 'Qt'
   attr_reader :scene
   @scale
@@ -16,12 +20,7 @@ class Presenter
     @scene = view.scene
     @scale = scale
     @objects = Array.new
-    Car.class_eval do
-      attr_accessor :draw_item
-    end
-    Road.class_eval do
-      attr_accessor :draw_item
-    end
+    add_draw_item_to_classes()
     #Car.class_eval do
     #
     #end
@@ -33,6 +32,21 @@ class Presenter
     #  #end
     #end
 
+  end
+
+  def add_draw_item_to_classes
+    Car.class_eval do
+      attr_accessor :draw_item
+    end
+    Road.class_eval do
+      attr_accessor :draw_item
+    end
+    ParkingRoad.class_eval do
+      attr_accessor :draw_item
+    end
+    ParkingSpot.class_eval do
+      attr_accessor :draw_item
+    end
   end
 
   def add(object)
@@ -49,6 +63,22 @@ class Presenter
         object.draw_item = GraphicCar.new
         object.draw_item.setScale(@scale)
         @scene.addItem(object.draw_item)
+        draw_car object
+      when 'ParkingRoad'
+        object.draw_item = GraphicRoad.new(object.coordinates(:start).x,
+                                           object.coordinates(:start).y,
+                                           object.coordinates(:end).x,
+                                           object.coordinates(:end).y)
+        object.draw_item.setScale(@scale)
+        @scene.addItem(object.draw_item)
+        spots = object.spots
+        spots.each { |spot|
+          add spot
+        }
+      when 'ParkingSpot'
+        object.draw_item = GraphicParkingSpot.new(object.coordinate, object.is_left, object.angle, $SPOT_LENGTH)
+        object.draw_item.setScale(@scale)
+        @scene.addItem(object.draw_item)
     end
   end
 
@@ -58,16 +88,14 @@ class Presenter
       case object.class.name
         when 'Road'
           draw_road(object)
-      end
-    end
-
-    for object in @objects
-      case object.class.name
         when 'Car'
           draw_car(object)
+        when 'ParkingRoad'
+          draw_road(object)
+        when 'ParkingSpot'
+          draw_spot(object)
       end
     end
-
   end
 
   def draw_car(car)
@@ -76,9 +104,17 @@ class Presenter
       @objects.delete(car)
       return
     end
-    car.draw_item.setPos(x(car.coordinate), y(car.coordinate))
+    cosin=Math.cos car.placement.angle
+    sinus=Math.sin car.placement.angle
+    car.draw_item.setPos(x(car.coordinate)+@scale*sinus, y(car.coordinate)-@scale*cosin)
     car.draw_item.setRotation(car.state.rotation/Math::PI*180.0)
     car.draw_item.setScale(@scale)
+  end
+
+  def draw_spot(spot)
+    spot.draw_item.setPos(x(spot.coordinate), y(spot.coordinate))
+    spot.draw_item.assigned=spot.assigned?
+    spot.draw_item.setScale(@scale)
   end
 
   def draw_road(road)

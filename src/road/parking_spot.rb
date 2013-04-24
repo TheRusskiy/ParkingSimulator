@@ -1,9 +1,12 @@
 class ParkingSpot
   attr_reader :road
   attr_reader :is_left
+  attr_reader :angle
+  attr_reader :coordinate
   def initialize(entrance_coordinate, coordinate, owning_road, angle, is_left)
     @angle=angle
     @coordinates=Hash.new
+    @coordinate=entrance_coordinate # yeah, yeah, redundant... for the sake of attr_reader naming
     @coordinates[:end]=coordinate
     @coordinates[:start]=entrance_coordinate
     @car = nil
@@ -24,26 +27,30 @@ class ParkingSpot
       car.turn
     end
     free = @road.free_space?(@coordinates[:start])
-    if not car.wants_to_park? and free
-      car.move_to @road
+    if free and not car.wants_to_park?
+      #car.move_to @road
+      car.placement=@road
+      car.coordinate=@coordinates[:start]
+      @road.include_car car
+
       @car.assigned_spot = nil
       @car=nil
       @assigned_car=nil
     end
   end
 
-  def move_car_back_to_road(car)
-    if @extension;
-      unless @extension.free_space?
-        car.stopped=true
-        return
-      end
-      car.stopped=false
-      car.move_to @extension
-    end
-    @cars.delete(car)
-    car.placement=@extension
-  end
+  #def move_car_back_to_road(car)
+  #  if @extension;
+  #    unless @extension.free_space?
+  #      car.stopped=true
+  #      return
+  #    end
+  #    car.stopped=false
+  #    car.move_to @extension
+  #  end
+  #  @cars.delete(car)
+  #  car.placement=@extension
+  #end
 
   def coordinates(coord_name)
     @coordinates[coord_name]
@@ -62,8 +69,15 @@ class ParkingSpot
     @assigned_car
   end
 
+  def assigned?
+    not @assigned_car.nil?
+  end
+
   def add_car(car)
     @car=car
+    #if is_left coord = @coordinates[:start].with_x
+    coord = @coordinates[:end]
+    @car.coordinate=coord
   end
 
   def has_car?(car)

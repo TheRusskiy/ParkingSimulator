@@ -22,7 +22,7 @@ class ParkingRoad < Road
 
   def move_car_by(car, by_space)
     super
-    if car.wants_to_park? and car.assigned_spot.road==self
+    if car.wants_to_park? and car.assigned_spot.road==self  #TODO!!!! and car.assigned_spot
        start_car = DistanceCalculator.distance_between(@coordinates[:start], car.coordinate)
        start_spot = DistanceCalculator.distance_between(@coordinates[:start], car.assigned_spot.coordinates(:start))
       if start_car>=start_spot
@@ -66,11 +66,11 @@ class ParkingRoad < Road
     dy = $SPOT_LENGTH*@sinus
     move_car($SPOT_LENGTH, fake) #skip first 6 meters
     while DistanceCalculator.distance_between(fake.coordinate, @coordinates[:end])>$SPOT_LENGTH
-      move_car($SPOT_LENGTH, fake)
-      c1 = Coordinate.new(fake.coordinate.x-dx, fake.coordinate.y+dy)
+      c1 = Coordinate.new(fake.coordinate.x-dy/2, fake.coordinate.y+dx/2)
       p1 = ParkingSpot.new(fake.coordinate, c1, self, @angle, true)
-      c2 = Coordinate.new(fake.coordinate.x+dx, fake.coordinate.y-dy)
+      c2 = Coordinate.new(fake.coordinate.x+dy/2, fake.coordinate.y-dx/2)
       p2 = ParkingSpot.new(fake.coordinate, c2, self, @angle, false)
+      move_car($SPOT_LENGTH, fake)
       @spots<<p1
       @spots<<p2
     end
