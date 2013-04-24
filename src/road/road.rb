@@ -18,6 +18,7 @@ class Road
     @sinus = Math.sin(@angle)
     @cosine = Math.cos(@angle)
     @safe_gap=1
+    @coordinate_to_connect=nil
   end
 
   def get_state(car)
@@ -63,9 +64,9 @@ class Road
   def move_car_by(car, by_space)
     move_car(by_space, car)
     if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0) and @parking_entrance.parking_lot.has_free_spots?
-      move_car_to_parking(car)
+      move_car_to(car, @parking_entrance)
     elsif DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])>=@length
-      move_car_to_extension(car)
+      move_car_to(car, @extension, @coordinate_to_connect)
     end
   end
 
@@ -97,6 +98,17 @@ class Road
     @parking_entrance_distance
   end
 
+  def coordinate_at(length)
+    dx = length*@cosine
+    dy = length*@sinus
+    Coordinate.new(@coordinates[:start].x+dx, @coordinates[:start].y+dy)
+  end
+
+  def connect_at(road, length)
+    @extension=road
+    @coordinate_to_connect = road.coordinate_at(length)
+    @length=DistanceCalculator.distance_between(@coordinate_to_connect, @coordinates[:start])
+  end
 
 
   #____P_R_I_V_A_T_E_____#
@@ -123,27 +135,18 @@ class Road
     car.coordinate=Coordinate.new(car.coordinate.x+dx, car.coordinate.y+dy)
   end
 
-  def move_car_to_parking(car)
-    unless @parking_entrance.free_space?
-      car.stopped=true
-      return
-    end
-    car.stopped=false
-    car.move_to @parking_entrance
-    @cars.delete(car)
-  end
-
-  def move_car_to_extension(car)
-    if @extension;
-      unless @extension.free_space?
+  def move_car_to(car, placement, starting_coordinate=nil)
+    if placement;
+      unless placement.free_space?
         car.stopped=true
         return
       end
       car.stopped=false
-      car.move_to @extension
+      car.move_to placement
     end
     @cars.delete(car)
-    car.placement=@extension
+    car.placement=placement
+    car.coordinate=starting_coordinate unless starting_coordinate.nil?
   end
 
   def assign_parking_spot(car)

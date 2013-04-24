@@ -151,4 +151,35 @@ class RoadTest < MiniTest::Unit::TestCase
     assert_equal DistanceCalculator.distance_between(@c1, car2.coordinate), 10-road.safe_gap-car.length
   end
 
+  def test_can_get_coord_by_distance
+    road = Road.new(@c1, @c2)
+    c1 = road.coordinate_at(0)
+    assert c1.x==0
+    assert c1.y==0
+    c2 = road.coordinate_at(50*Math.sqrt(2))
+    assert_in_epsilon c2.x, 50
+    assert_in_epsilon c2.y, 50
+    c3 = road.coordinate_at(100*Math.sqrt(2))
+    assert_in_epsilon c3.x, 100
+    assert_in_epsilon c3.y, 100
+  end
+
+  def test_can_be_connected_to_random_point
+    c1 = Coordinate.new(0, 0)
+    c2 = Coordinate.new(100, 0)
+    road1 = Road.new(c1, c2)
+    c3 = Coordinate.new(50, 50)
+    c4 = road1.coordinate_at 50
+    road2 = Road.new(c3, c4)
+    road2.connect_at(road1, 50)
+
+    car=Car.new
+    car.move_to road2
+    car.move_by(51)
+    refute road2.has_car? car
+    assert road1.has_car? car
+    assert_in_delta car.coordinate.x, 50, 1
+    assert_in_delta car.coordinate.y, 0, 0.001
+  end
+
 end
