@@ -21,16 +21,16 @@ class Core
 
     to_entrance=40
     @entrance_start = Coordinate.new(@road_start.x-to_entrance, @road.coordinate_at(to_entrance).y)
-    @entrance_end = Coordinate.new(70, 90)
+    @entrance_end = Coordinate.new(100, 90)
     @entrance = Road.new(@entrance_start, @entrance_end)
     @road.add_parking_entrance(@entrance, to_entrance)
 
     @lot = ParkingLot.new
     @lot.set_entrance @entrance
 
-    @road2_start = Coordinate.new(60, 20)
-    @road3_start = Coordinate.new(20, 20)
-    @road3_end = Coordinate.new(20, 90)
+    @road2_start = Coordinate.new(80, 20)
+    @road3_start = Coordinate.new(40, 20)
+    @road3_end = Coordinate.new(30, 90)
     @road1 = ParkingRoad.new(@entrance_end, @road2_start)
     @road2 = ParkingRoad.new(@road2_start, @road3_start)
     @road3 = ParkingRoad.new(@road3_start, @road3_end)
@@ -41,7 +41,7 @@ class Core
     @lot.add_road_segment @road2
     @lot.add_road_segment @road3
 
-    to_initial_road = 100
+    to_initial_road = 150
     @parking_exit_coord = @road.coordinate_at to_initial_road
     @parking_exit = Road.new(@road3_end, @parking_exit_coord)
     @parking_exit.connect_at @road, to_initial_road
@@ -58,7 +58,7 @@ class Core
     @presenter.add(@entrance)
     @presenter.add(@parking_exit)
 
-    @tick_thread.set_frequency(60)
+    @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw
@@ -68,13 +68,13 @@ class Core
     car = @generator.next_car
     if car and @road.free_space?
       @cars<<car
-      if rand(2)==0; car.wants_to_park 10 end
+      if rand(2)==0; car.wants_to_park 300 end
       puts "car"
       car.move_to(@road)
       @presenter.add(car)
     end
     for car in @cars
-      car.move_by(1)
+      car.move_by(2)
       if car.placement.nil?; @cars.delete(car); end;
     end
     @view.show
