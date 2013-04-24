@@ -50,7 +50,7 @@ class Core
     @presenter.add(@road3)
     @presenter.add(@entrance)
 
-    @tick_thread.set_frequency(60)
+    @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw

@@ -14,11 +14,11 @@ class PresenterTest < MiniTest::Unit::TestCase
 
   def setup
     @presenter = Presenter.new(ParkingView.new(Qt::GraphicsScene.new))
-    @road = Road.new
+    @c1 = Coordinate.new(60, 60)
+    @c2 = Coordinate.new(0, 0)
+    @road = Road.new(@c1, @c2)
     @car = Car.new
     @car.move_to @road
-    @c1 = Coordinate.new(60, 60)
-    @c2 = Coordinate.new(60, 0)
     @entrance = ParkingRoad.new(@c1, @c2)
   end
 
@@ -70,6 +70,7 @@ class PresenterTest < MiniTest::Unit::TestCase
     y2 = @car.draw_item.y
     assert_equal(x1, x2)
     assert_equal(y1, y2)
+    @car.move_by(10)
     @presenter.redraw
     x3 = @car.draw_item.x
     y3 = @car.draw_item.y

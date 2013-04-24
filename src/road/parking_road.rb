@@ -22,7 +22,7 @@ class ParkingRoad < Road
 
   def move_car_by(car, by_space)
     super
-    if car.wants_to_park? and car.assigned_spot.road==self  #TODO!!!! and car.assigned_spot
+    if car.wants_to_park? and car.assigned_spot.road==self
        start_car = DistanceCalculator.distance_between(@coordinates[:start], car.coordinate)
        start_spot = DistanceCalculator.distance_between(@coordinates[:start], car.assigned_spot.coordinates(:start))
       if start_car>=start_spot
