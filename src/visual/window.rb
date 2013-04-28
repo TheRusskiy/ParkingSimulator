@@ -8,21 +8,25 @@ class Window < Qt::MainWindow
 
   def initialize()
 		super
+    puts self.methods
     @w = Qt::Widget.new
     setCentralWidget(@w)
 
     @view = ParkingView.new(Qt::GraphicsScene.new)
     @w.layout = Qt::GridLayout.new
-    @w.layout.addWidget(@view, 0, 0, 1, 1)
+    @w.layout.addWidget(@view, 0, 0)
     @w.layout.addWidget(createControlGroupBox, 1, 0)
-    @w.layout.addWidget(createInformationGroupBox, 0, 3, 1, 1)
-    @w.layout.setRowStretch(0, 10)
-    @w.layout.setColumnStretch(0, 10)
+    @w.layout.addWidget(createInformationGroupBox, 0, 1, 2, 1)
+    @w.layout.setRowStretch(0, 1)
+    @w.layout.setRowStretch(1, 0)
+    @w.layout.setColumnStretch(0, 5)
+    @w.layout.setColumnStretch(1, 2)
     createMenus
     createStatusBar
 	  setWindowTitle('Parking lot simulator')
     adjustWindowSize(@w)
-    resize(@w.width+600, @w.height)
+    resize(@w.width+450, @w.height+0)
+    setFixedSize(self.size());
 	end
 
   def adjustWindowSize(item)
@@ -316,22 +320,72 @@ class Window < Qt::MainWindow
 
   def createInformationGroupBox
     layout = Qt::GridLayout.new
-    box = Qt::GroupBox.new("Control Panel")
-    layout.addWidget w1=createTimeControls(), 0, 0, 1, 2
-    layout.addWidget w2=createUniformControls(), 0, 2, 1, 1
-    layout.addWidget w3=createNormalControls(), 0, 3, 1, 1
-    layout.addWidget w4=createExponentialControls(), 0, 4, 1, 1
-    layout.addWidget w5=createDeterminedControls(), 0, 5, 1, 1
-    layout.addWidget w6=createPriceControls(), 0, 6, 1, 1
-    w2.setVisible(false)
-    w3.setVisible(false)
-    w4.setVisible(false)
-
+    box = Qt::GroupBox.new("Information Panel")
+    layout.addWidget @clock=createClock(), 0, 0, 1, 1
+    layout.addWidget @clock=createStatistics(), 0, 1, 1, 2
+    layout.addWidget @table=createTable(), 1, 0, 3, 3
     box.layout=layout
     return box
   end
 
+  def createClock
+    return DigitalClock.new
+  end
 
+  def createStatistics
+    layout = Qt::GridLayout.new
+    box = Qt::GroupBox.new('Statistics')
+    @ticks=1000
+    ticksLabel = Qt::Label.new("Ticks past:"+@ticks.to_s)
+    @total_time=1000
+    totalTimeLabel = Qt::Label.new("Total simulation time: %d hours"%[@total_time])
+    @total_cars=1000
+    totalCarsLabel = Qt::Label.new("Total cars spawned: %d"%[@total_cars])
+    @money_earned=1000
+    totalMoneyLabel = Qt::Label.new("Money earned: %d $"%[@money_earned])
+    @money_per_hour=@money_earned/@total_time
+    hourMoneyLabel = Qt::Label.new("Money earned: %d $ / hour"%[@money_per_hour])
+    layout.addWidget(ticksLabel, 0, 0)
+    layout.addWidget(totalTimeLabel, 1, 0)
+    layout.addWidget(totalCarsLabel, 2, 0)
+    layout.addWidget(totalMoneyLabel, 3, 0)
+    layout.addWidget(hourMoneyLabel, 4, 0)
+    box.layout=layout
+    return box
+  end
+
+  def createTable
+    @model = Qt::StandardItemModel.new(0, 3, self)
+    @model.setHeaderData(0, Qt::Horizontal, Qt::Variant.new(tr("Assigned")))
+    @model.setHeaderData(1, Qt::Horizontal, Qt::Variant.new(tr("Time left")))
+    @model.setHeaderData(2, Qt::Horizontal, Qt::Variant.new(tr("Car type")))
+    table = Qt::TableView.new
+    table.model = @model
+    #@model.insertRow(0)
+    #@model.insertRow(0)
+    #setTableData(0, 0, "asdsda")
+    createTableRows(10)
+    @selectionModel = Qt::ItemSelectionModel.new(@model)
+    table.selectionModel = @selectionModel
+    table.selectionMode=0
+    table.editTriggers=0
+    table
+  end
+
+  def setTableData(index1, index2, value)
+    @model.setData(@model.index(index1, index2, Qt::ModelIndex.new),
+                   qVariantFromValue(value))
+  end
+
+  def createTableRows(count)
+    prev_count = @model.rowCount
+    for i in 0..prev_count do
+      @model.removeRow(0)
+    end
+    for i in 0...count do
+      @model.insertRow(0)
+    end
+  end
 
   def createButton(text, member, tip=nil)
     button = Qt::ToolButton.new()
@@ -386,5 +440,30 @@ class Window < Qt::MainWindow
     @helpMenu = menuBar().addMenu("Help")
     @helpMenu.addAction(@aboutAct)
     @helpMenu.addAction(@helpAct)
+  end
+end
+class DigitalClock < Qt::LCDNumber
+  attr_accessor :time
+  # Constructs a DigitalClock widget
+  def initialize(parent = nil)
+    super(parent)
+    @time = Time.now
+
+    setSegmentStyle(Filled)
+    showTime()
+    resize(150, 150)
+  end
+
+  def forward(seconds)
+    @time = @time + seconds
+    showTime
+  end
+
+  def showTime()
+    hour = @time.hour.to_s
+    hour = hour.length==1 ? '0'+hour : hour
+    minutes = @time.min.to_s
+    minutes = minutes.length==1 ? '0'+minutes : minutes
+    display(hour+":"+minutes)
   end
 end
