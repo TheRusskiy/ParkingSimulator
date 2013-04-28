@@ -49,4 +49,8 @@ class CarTest < MiniTest::Unit::TestCase
   def test_car_has_state
     @car.state.wont_be_nil
   end
+
+  def test_truck
+    truck = Truck.new
+  end
 end

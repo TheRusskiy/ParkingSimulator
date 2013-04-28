@@ -58,7 +58,7 @@ class Core
     @presenter.add(@entrance)
     @presenter.add(@parking_exit)
 
-    @tick_thread.set_frequency(30)
+    @tick_thread.set_frequency(60)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw
@@ -68,13 +68,12 @@ class Core
     car = @generator.next_car
     if car and @road.free_space?
       @cars<<car
-      if rand(2)==0; car.wants_to_park 300 end
-      puts "car"
+      if rand(2)==0; car.wants_to_park 600 end
       car.move_to(@road)
       @presenter.add(car)
     end
     for car in @cars
-      car.move_by(2)
+      car.move_by(0.5)
       if car.placement.nil?; @cars.delete(car); end;
     end
     @view.show

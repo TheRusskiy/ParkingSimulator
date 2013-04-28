@@ -7,7 +7,7 @@ class TimerThread
   attr_writer :job, :draw
   $PAUSE_REFRESH_TIME = 0.0 #seconds
   $REDRAW_RATE = 1000.0 /
-                    30.0 #times in a second
+                    25.0 #times in a second
   def initialize
     @milli_acc = 0
     @working = false

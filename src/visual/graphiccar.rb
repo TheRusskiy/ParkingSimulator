@@ -1,24 +1,40 @@
 class GraphicCar < Qt::GraphicsItem
-  def initialize()
+  def initialize(length=4)
     super(nil)
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
-    adjust = 0.5
+    adj = 1
     # todo
     #@boundingRect = Qt::RectF.new(-20 - adjust, -22 - adjust,
     #                              40 + adjust, 83 + adjust)
-    @boundingRect = Qt::RectF.new(0,0,5,5)
+    @boundingRect = Qt::RectF.new(0,0,length+adj,length+adj)
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
     @brush = Qt::Brush.new(@color)
+    setAcceptHoverEvents(true)
+    @text = Qt::GraphicsTextItem.new("sdasda", self)
+    showText
   end
 
   def boundingRect
     return @boundingRect
   end
 
-  def paint(painter, arg, widget)
+  def hoverEnterEvent(event)
+    showText() unless @draw_text
+  end
 
+  def hoverLeaveEvent(event)
+    if @draw_text; hideText; end
+  end
+
+  def paint(painter, arg, widget)
+    @text.setRotation(0-rotation)
+    @text.setScale(1.0/scale)
+    @text.setPlainText(Integer(rotation).to_s)
+    @text.adjustSize
+    #if @draw_text; @text.show; else @text.hide; end;
     painter.brush = @brush
-    painter.drawRect(0,0, 5, 2)
+    painter.drawRect(0,0, 4, 2)
+    #if @draw_text; painter.drawText(0, 0, 5, 5, Qt::TextSingleLine, "sdaasd") end
     #setVisible(true)
     #setPos(rand(100), rand(100))
     #painter.drawRect(0,30, 10, 20)
@@ -54,4 +70,15 @@ class GraphicCar < Qt::GraphicsItem
     #painter.brush = Qt::NoBrush
     #painter.drawPath(path)
   end
+
+  def showText
+    @draw_text=true
+    @text.show
+  end
+
+  def hideText
+    @draw_text=false
+    @text.hide
+  end
+
 end
