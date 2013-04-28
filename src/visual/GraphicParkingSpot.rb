@@ -18,7 +18,7 @@ class GraphicParkingSpot < Qt::GraphicsItem
   end
 
   def create_bounding_rect
-    side=@spot_length*@scale*2
+    side=@spot_length*@scale*4
     Qt::RectF.new(-side,-side,side,side)
   end
 

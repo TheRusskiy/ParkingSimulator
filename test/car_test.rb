@@ -54,4 +54,13 @@ class CarTest < MiniTest::Unit::TestCase
     truck = Truck.new
     assert_equal truck.length, 8
   end
+
+  def test_can_move_according_to_placement
+    @road.speed=5
+    previous_space = @state.get_available_space
+    @car.move()
+    @state =  @road.get_state(@car)
+    assert_equal previous_space-5, @state.get_available_space
+    assert ParkingSpot.new(nil, nil, nil, nil, nil).respond_to?(:speed)
+  end
 end

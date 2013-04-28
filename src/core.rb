@@ -77,7 +77,7 @@ class Core
     @parking_exit.connect_at @road, to_initial_road
     @road3.extension=@parking_exit
 
-    @generator = CarGenerator.uniform(1)
+    @generator = CarGenerator.uniform(10)
     @tick_thread = TimerThread.new
     @presenter = Presenter.new(view, 4)
 
@@ -88,7 +88,15 @@ class Core
     @presenter.add(@entrance)
     @presenter.add(@parking_exit)
 
-    @tick_thread.set_frequency(100)
+    usual_speed=1
+    lot_speed=0.5
+    entrance_exit_speed=0.5
+    @road.speed=usual_speed
+    @entrance.speed=entrance_exit_speed
+    @parking_exit.speed=entrance_exit_speed
+    @lot.speed = lot_speed
+
+    @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw
@@ -106,7 +114,7 @@ class Core
       if car; @generator.spawned_car=car end #preserve trucks in high load
     end
     for each_car in @cars
-      each_car.move_by(0.5)
+      each_car.move
       if each_car.placement.nil?; @cars.delete(each_car); end;
     end
     @view.show

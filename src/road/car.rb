@@ -5,6 +5,7 @@ class Car
   attr_accessor :placement
   attr_reader :state
   attr_reader :length
+  attr_reader :width
   attr_reader :assigned_spot
   attr_reader :required_spots
   $car_length=4
@@ -16,6 +17,7 @@ class Car
     @turns_to_wait = 0
     @stopped = false
     @required_spots=1
+    @width=2
   end
 
   def move_to(placement, starting_coordinate=nil)
@@ -31,6 +33,10 @@ class Car
     if space<0; space=0; end;
     @placement.move_car_by(self, space)
     #if @placement; @state=@placement.get_state(self) end
+  end
+
+  def move()
+    move_by(@placement.speed)
   end
 
   def wants_to_park?
@@ -67,6 +73,7 @@ class Truck < Car
     @length=$truck_length
     @assigned_spot_2=nil
     @required_spots=2
+    @width=3
   end
 
   def assigned_spot_2

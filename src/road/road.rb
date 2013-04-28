@@ -7,6 +7,7 @@ class Road
   include Math
   attr_reader :length, :cars, :angle, :safe_gap
   attr_accessor :parking_lot
+  attr_accessor :speed
 
   def initialize(c1=Coordinate.new(100, 100), c2=Coordinate.new(0, 100))
     @cars = Array.new
@@ -19,6 +20,7 @@ class Road
     @cosine = Math.cos(@angle)
     @safe_gap=0
     @coordinate_to_connect=nil
+    @speed=1
   end
 
   def get_state(car)

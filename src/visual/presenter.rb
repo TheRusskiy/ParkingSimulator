@@ -120,7 +120,7 @@ class Presenter
     end
     cosin=Math.cos car.placement.angle
     sinus=Math.sin car.placement.angle
-    width = car.class.name=='Truck' ? 3 : 2
+    width=car.width
     x_shift = @scale*sinus*width/2
     y_shift = -@scale*cosin*width/2
     car.draw_item.setPos(x(car.coordinate)+x_shift, y(car.coordinate)+y_shift)

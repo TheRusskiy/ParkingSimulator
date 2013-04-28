@@ -250,6 +250,13 @@ class ParkingLotTest < MiniTest::Unit::TestCase
     refute spot2.assigned_car== truck
   end
 
+  def test_sets_speed_for_all_parts
+    @lot.speed=5;
+    assert_equal @road1.speed, 5
+    assert_equal @road2.speed, 5
+    assert_equal @road3.speed, 5
+  end
+
 
 end
       

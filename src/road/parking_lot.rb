@@ -49,6 +49,12 @@ class ParkingLot
     return false
   end
 
+  def speed=(value)
+    @segments.each do |segment|
+      segment.speed=value
+    end
+  end
+
   #____P_R_I_V_A_T_E_____#
   private
 
