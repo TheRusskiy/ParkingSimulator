@@ -53,7 +53,7 @@ class PresenterTest < MiniTest::Unit::TestCase
     length1 = @presenter.scene.items.length
     @presenter.add(@car)
     length2 = @presenter.scene.items.length
-    assert_equal(length1+1, length2)
+    assert_equal(length1+2, length2) # + text
   end
 
   def test_extends_with_drawable()
@@ -101,6 +101,17 @@ class PresenterTest < MiniTest::Unit::TestCase
     @presenter.add(@entrance)
     length2 = @presenter.scene.items.length
     assert_equal length2-length1, @entrance.spot_count+1 #spots+road itself
+  end
+
+  def test_add_truck
+    truck = Truck.new
+    road = Road.new(@c1, @c2) # somehow doesn't
+    truck.move_to(road)       #     work without placing to road
+    length1 = @presenter.scene.items.length
+    @presenter.add(truck)
+    truck.draw_item.wont_be_nil
+    length2 = @presenter.scene.items.length
+    assert_equal(length1+2, length2) # + text
   end
 
 end

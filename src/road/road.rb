@@ -13,11 +13,11 @@ class Road
     @coordinates = Hash.new
     @coordinates[:start] = c1
     @coordinates[:end] = c2
-    @length=DistanceCalculator.distance_between(c1, c2)
+    @length=DistanceCalculator.distance_between(@coordinates[:start], @coordinates[:end])
     @angle = DistanceCalculator.angle_between(c1, c2)
     @sinus = Math.sin(@angle)
     @cosine = Math.cos(@angle)
-    @safe_gap=1
+    @safe_gap=5
     @coordinate_to_connect=nil
   end
 

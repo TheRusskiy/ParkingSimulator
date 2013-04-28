@@ -1,6 +1,8 @@
 class GraphicCar < Qt::GraphicsItem
   def initialize(length=4)
     super(nil)
+    @length=length
+    @width=2
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
     adj = 1
     # todo
@@ -33,7 +35,7 @@ class GraphicCar < Qt::GraphicsItem
     @text.adjustSize
     #if @draw_text; @text.show; else @text.hide; end;
     painter.brush = @brush
-    painter.drawRect(0,0, 4, 2)
+    painter.drawRect(0,0, @length, @width)
     #if @draw_text; painter.drawText(0, 0, 5, 5, Qt::TextSingleLine, "sdaasd") end
     #setVisible(true)
     #setPos(rand(100), rand(100))
@@ -80,5 +82,12 @@ class GraphicCar < Qt::GraphicsItem
     @draw_text=false
     @text.hide
   end
+end
 
+class GraphicTruck < GraphicCar
+  def initialize(length=8)
+    super
+    @length=length
+    @width=3
+  end
 end

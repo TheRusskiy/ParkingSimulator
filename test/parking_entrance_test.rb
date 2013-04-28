@@ -54,7 +54,7 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
     car2.move_by(40)
     assert @road.has_car? car2
     refute @entrance.has_car? car2
-    @car.move_by 5
+    @car.move_by @car.length+@road.safe_gap
     car2.move_by 1
     refute @road.has_car? car2
     assert @entrance.has_car? car2

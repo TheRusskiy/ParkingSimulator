@@ -64,6 +64,11 @@ class Presenter
         object.draw_item.setScale(@scale)
         @scene.addItem(object.draw_item)
         draw_car object
+      when 'Truck'
+        object.draw_item = GraphicTruck.new
+        object.draw_item.setScale(@scale)
+        @scene.addItem(object.draw_item)
+        draw_car object
       when 'ParkingRoad'
         object.draw_item = GraphicRoad.new(object.coordinates(:start).x,
                                            object.coordinates(:start).y,
@@ -89,6 +94,8 @@ class Presenter
         when 'Road'
           draw_road(object)
         when 'Car'
+          draw_car(object)
+        when 'Truck'
           draw_car(object)
         when 'ParkingRoad'
           draw_road(object)

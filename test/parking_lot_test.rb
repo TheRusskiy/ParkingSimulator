@@ -179,7 +179,7 @@ class ParkingLotTest < MiniTest::Unit::TestCase
     refute @road1.has_car? car
     assert spot.has_car? car
 
-    car2.move_by $SPOT_LENGTH
+    car2.move_by car2.length+@road1.safe_gap
     car.move_by(1)
     assert @road1.has_car? car
     refute spot.has_car? car

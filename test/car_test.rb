@@ -52,5 +52,6 @@ class CarTest < MiniTest::Unit::TestCase
 
   def test_truck
     truck = Truck.new
+    assert_equal truck.length, 8
   end
 end

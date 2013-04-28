@@ -47,7 +47,7 @@ class Core
     @parking_exit.connect_at @road, to_initial_road
     @road3.extension=@parking_exit
 
-    @generator = CarGenerator.uniform(20)
+    @generator = CarGenerator.uniform(5)
     @tick_thread = TimerThread.new
     @presenter = Presenter.new(view, 4)
 
@@ -58,7 +58,7 @@ class Core
     @presenter.add(@entrance)
     @presenter.add(@parking_exit)
 
-    @tick_thread.set_frequency(60)
+    @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw
@@ -68,12 +68,12 @@ class Core
     car = @generator.next_car
     if car and @road.free_space?
       @cars<<car
-      if rand(2)==0; car.wants_to_park 600 end
+      if rand(2)==0; car.wants_to_park 60 end
       car.move_to(@road)
       @presenter.add(car)
     end
     for car in @cars
-      car.move_by(0.5)
+      car.move_by(1)
       if car.placement.nil?; @cars.delete(car); end;
     end
     @view.show
