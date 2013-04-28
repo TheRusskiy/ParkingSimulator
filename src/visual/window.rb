@@ -50,6 +50,7 @@ class Window < Qt::MainWindow
     layout.addWidget w3=createNormalControls(), 0, 3, 1, 1
     layout.addWidget w4=createExponentialControls(), 0, 4, 1, 1
     layout.addWidget w5=createDeterminedControls(), 0, 5, 1, 1
+    layout.addWidget w6=createPriceControls(), 0, 6, 1, 1
     w2.setVisible(false)
     w3.setVisible(false)
     w4.setVisible(false)
@@ -258,6 +259,62 @@ class Window < Qt::MainWindow
     return box
   end
 
+  def createPriceControls()
+    layout = Qt::GridLayout.new
+    box = Qt::GroupBox.new('Price controls')
+    #Domestic car:
+    @domestic_price=[1, 100, 5]
+    domesticLabel = Qt::Label.new(tr("Domestic car price %d..%d:" % [@domestic_price[0], @domestic_price[1]]))
+    domesticSpinBox = Qt::DoubleSpinBox.new do |i|
+      i.range = @domestic_price[0]..@domestic_price[1]
+      i.singleStep = 1
+      i.value = @domestic_price[2]
+      i.suffix = ' $ / hour'
+    end
+    #Imported car:
+    @import_price=[1, 100, 10]
+    importLabel = Qt::Label.new(tr("Import car price %d..%d:" % [@import_price[0], @import_price[1]]))
+    importSpinBox = Qt::DoubleSpinBox.new do |i|
+      i.range = @import_price[0]..@import_price[1]
+      i.singleStep = 1
+      i.value = @import_price[2]
+      i.suffix = ' $ / hour'
+    end
+    #Truck price:
+    @truck_price=[1, 100, 10]
+    truckLabel = Qt::Label.new(tr("Truck price %d..%d:" % [@truck_price[0], @truck_price[1]]))
+    truckSpinBox = Qt::DoubleSpinBox.new do |i|
+      i.range = @truck_price[0]..@truck_price[1]
+      i.singleStep = 1
+      i.value = @truck_price[2]
+      i.suffix = ' $ / hour'
+    end
+    #Night discount:
+    @night_price=[1, 100, 60]
+    nightLabel = Qt::Label.new(tr("Night discount %d..%d:" % [@night_price[0], @night_price[1]]))
+    nightSpinBox = Qt::SpinBox.new do |i|
+      i.range = @night_price[0]..@night_price[1]
+      i.singleStep = 1
+      i.value = @night_price[2]
+      i.suffix = '% of day price'
+    end
+    @applyPricesButton = createButton("Apply", SLOT('applyPrices()'))
+    layout.addWidget(domesticLabel, 0, 0)
+    layout.addWidget(domesticSpinBox, 1, 0)
+    layout.addWidget(importLabel, 2, 0)
+    layout.addWidget(importSpinBox, 3, 0)
+    layout.addWidget(truckLabel, 4, 0)
+    layout.addWidget(truckSpinBox, 5, 0)
+    layout.addWidget(nightLabel, 6, 0)
+    layout.addWidget(nightSpinBox, 7, 0)
+    layout.addWidget(@applyPricesButton, 8, 0)
+    layout.setRowStretch(9, 1)
+    box.layout=layout
+    return box
+  end
+
+
+
   def createButton(text, member, tip=nil)
     button = Qt::ToolButton.new()
     button.setText(text)
@@ -274,7 +331,7 @@ class Window < Qt::MainWindow
     @exitAct = Qt::Action.new("Exit", self)
     @exitAct.shortcut = Qt::KeySequence.new( tr("Ctrl+X") )
     @exitAct.statusTip = "Get the hell out of here!"
-    connect(@exitAct, SIGNAL('triggered()'), self, SLOT('exitSignal()'))
+    connect(@exitAct, SIGNAL('triggered()'), self, SLOT('closeProgram()'))
     @fileMenu = menuBar().addMenu("File")
     #@fileMenu.addSeparator()
     @fileMenu.addAction(@exitAct)
@@ -300,9 +357,8 @@ class Window < Qt::MainWindow
     @viewMenu.addAction(@selectDeterminedAct)
     connect(@selectDeterminedAct, SIGNAL('triggered()'), self, SLOT('selectDetermined()'))
 
-
     @setScaleAct = Qt::Action.new("Choose scale", self)
-    @setScaleAct.statusTip = "Choose new scale from a dialog"
+    @setScaleAct.statusTip = "Choose a new scale from a dialog"
     @viewMenu = menuBar().addMenu("View")
     @viewMenu.addAction(@setScaleAct)
 
