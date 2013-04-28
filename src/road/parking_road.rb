@@ -98,6 +98,7 @@ class ParkingRoad < Road
       if spot.number==first.number+1
         results[0]=first
         results[1]=spot
+        break
       else
         first=spot
       end

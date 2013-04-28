@@ -53,7 +53,7 @@ class GraphicCar < Qt::GraphicsItem
 
   def adjust_text_setting()
     @text.setRotation(0-rotation)
-    @text.setScale(1.0/scale)
+    @text.setScale(2.0/scale)
     @text.setDefaultTextColor(@color)
     @text.setPlainText(Integer(pos.x/scale).to_s+':'+Integer(pos.y/scale).to_s)
     @text.adjustSize
