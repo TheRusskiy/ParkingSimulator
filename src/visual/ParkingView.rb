@@ -3,8 +3,8 @@ require_relative 'GraphicCar'
 
 class ParkingView < Qt::GraphicsView
   attr_reader :scene
-  X=1000
-  Y=400
+  X=700
+  Y=200
 
   def initialize(scene)
     @scene =  scene

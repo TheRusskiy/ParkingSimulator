@@ -45,22 +45,24 @@ class Core
     #@road3.extension=@parking_exit
 
 
-    @road_start = Coordinate.new(180, 100)
-    @road_end = Coordinate.new(0, 100)
+    p_height=40
+    p_length=180
+    @road_start = Coordinate.new(p_length, p_height)
+    @road_end = Coordinate.new(0, p_height)
     @road = Road.new(@road_start, @road_end)
 
     to_entrance=30
     @entrance_start = Coordinate.new(@road_start.x-to_entrance, @road.coordinate_at(to_entrance).y)
-    @entrance_end = Coordinate.new(120, 90)
+    @entrance_end = Coordinate.new(p_length-60, p_height-10)
     @entrance = Road.new(@entrance_start, @entrance_end)
     @road.add_parking_entrance(@entrance, to_entrance)
 
     @lot = ParkingLot.new
     @lot.set_entrance @entrance
 
-    @road2_start = Coordinate.new(100, 40)
-    @road3_start = Coordinate.new(60, 40)
-    @road3_end = Coordinate.new(50, 90)
+    @road2_start = Coordinate.new(p_length-80, p_height-40)
+    @road3_start = Coordinate.new(p_length-120, p_height-40)
+    @road3_end = Coordinate.new(p_length-120, p_height-10)
     @road1 = ParkingRoad.new(@entrance_end, @road2_start)
     @road2 = ParkingRoad.new(@road2_start, @road3_start)
     @road3 = ParkingRoad.new(@road3_start, @road3_end)
@@ -117,7 +119,7 @@ class Core
       each_car.move
       if each_car.placement.nil?; @cars.delete(each_car); end;
     end
-    @view.show
+    #@view.show
   end
 
   def start()

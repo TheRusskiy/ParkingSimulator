@@ -96,6 +96,7 @@ class Presenter
 
 
   def redraw
+    @scene.invalidate
     for object in @objects
       case object.class.name
         when 'Road'
