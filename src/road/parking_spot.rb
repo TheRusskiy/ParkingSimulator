@@ -3,6 +3,7 @@ class ParkingSpot
   attr_reader :is_left
   attr_reader :angle
   attr_reader :coordinate
+  attr_accessor :number
   def initialize(entrance_coordinate, coordinate, owning_road, angle, is_left)
     @angle=angle
     @coordinates=Hash.new
@@ -13,6 +14,7 @@ class ParkingSpot
     @assigned_car = nil
     @road = owning_road
     @is_left=is_left
+    @number = 0
   end
 
   def get_state(car)
@@ -22,35 +24,27 @@ class ParkingSpot
   end
 
   def move_car_by(car, by_space)
-    if not car.eql? @car; raise Exception('Car inside spot and car to be moved are different') end
+    if not car.eql? @car;
+      raise Exception.new('Car inside spot and car to be moved are different') end
     if car.wants_to_park?
       car.turn
     end
-    free = @road.free_space?(car.length, @coordinates[:start])
-    if free and not car.wants_to_park?
+    exit_is_free = @road.free_space?(car.length, @coordinates[:start])
+    if exit_is_free and not car.wants_to_park?
       #car.move_to @road
       car.placement=@road
       car.coordinate=@coordinates[:start]
       @road.include_car car
 
       @car.assigned_spot = nil
+      if @car.respond_to?(:assigned_spot_2)
+        @car.assigned_spot_2.assigned_car=nil
+      end
       @car=nil
       @assigned_car=nil
     end
   end
 
-  #def move_car_back_to_road(car)
-  #  if @extension;
-  #    unless @extension.free_space?
-  #      car.stopped=true
-  #      return
-  #    end
-  #    car.stopped=false
-  #    car.move_to @extension
-  #  end
-  #  @cars.delete(car)
-  #  car.placement=@extension
-  #end
 
   def coordinates(coord_name)
     @coordinates[coord_name]

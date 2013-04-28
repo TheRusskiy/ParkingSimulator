@@ -68,7 +68,7 @@ class Road
 
   def move_car_by(car, by_space)
     move_car(by_space, car)
-    if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0) and @parking_entrance.parking_lot.has_free_spots?
+    if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0) and @parking_entrance.parking_lot.has_free_spots?(car.required_spots)
       move_car_to(car, @parking_entrance)
     elsif DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])>=@length
       move_car_to(car, @extension, @coordinate_to_connect)

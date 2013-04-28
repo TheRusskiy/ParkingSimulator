@@ -14,13 +14,11 @@ class ParkingLot
   end
 
   def assign_spot(car)
-    @segments.each { |segment|
-      free_spot = segment.get_free_spot
-      unless free_spot.nil?
-        car.assigned_spot=free_spot
-        break
-      end
-    }
+    if car.class.name=='Car'
+      assign_spot_for_car(car)
+    else
+      assign_spot_for_truck(car)
+    end
   end
 
   def spot_count
@@ -31,8 +29,9 @@ class ParkingLot
     return spots
   end
 
-  def has_free_spots?
-    free_spot_count!=0
+  def has_free_spots?(number_of_spots=1)
+    if number_of_spots==1; return free_spot_count!=0; end
+    if number_of_spots==2; return free_double_spots?; end
   end
 
   def free_spot_count
@@ -41,5 +40,36 @@ class ParkingLot
       spots = spots + segment.free_spot_count
     end
     return spots
+  end
+
+  def free_double_spots?
+    @segments.each do |segment|
+      if segment.free_double_spots?; return true; end;
+    end
+    return false
+  end
+
+  #____P_R_I_V_A_T_E_____#
+  private
+
+  def assign_spot_for_car(car)
+    @segments.each { |segment|
+      free_spot = segment.get_free_spot
+      unless free_spot.nil?
+        car.assigned_spot=free_spot
+        break
+      end
+    }
+  end
+
+  def assign_spot_for_truck(truck)
+    @segments.each { |segment|
+      free_spots = segment.get_double_free_spot
+      unless free_spots.nil?
+        truck.assigned_spot=free_spots[0]
+        truck.assigned_spot_2=free_spots[1]
+        break
+      end
+    }
   end
 end

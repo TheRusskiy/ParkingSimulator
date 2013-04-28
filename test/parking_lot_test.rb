@@ -185,5 +185,71 @@ class ParkingLotTest < MiniTest::Unit::TestCase
     refute spot.has_car? car
   end
 
+  def test_truck_gets_2_spots_when_enters
+    truck = Truck.new
+    truck.wants_to_park 1
+    before = @entrance.parking_lot.free_spot_count
+    truck.move_to @entrance
+    after = @entrance.parking_lot.free_spot_count
+    assert_equal before-2, after
+  end
+
+  def test_trucks_spots_on_same_side
+    truck = Truck.new
+    truck.wants_to_park 1
+    truck.move_to @entrance
+    assert truck.assigned_spot.is_left == truck.assigned_spot_2.is_left
+    #repeat in case of lucky hits...
+    truck.move_by(20)
+    truck_2 = Truck.new
+    truck_2.wants_to_park 1
+    truck_2.move_to @entrance
+    assert truck_2.assigned_spot.is_left == truck_2.assigned_spot_2.is_left
+  end
+
+  def test_truck_spots_are_adjacent
+    spot1 = @road2.get_free_spot
+    spot1.assigned_car=Car.new
+    spot2 = @road2.get_free_spot
+    spot2.assigned_car=Car.new
+    spot3 = @road2.get_free_spot
+    spot3.assigned_car=Car.new
+    distances = Array.new
+    distances[0] = DistanceCalculator.distance_between(spot1.coordinate,spot2.coordinate)
+    distances[1] = DistanceCalculator.distance_between(spot2.coordinate,spot3.coordinate)
+    distances[2] = DistanceCalculator.distance_between(spot1.coordinate,spot3.coordinate)
+    #needed value is the value of two vertically adjacent spots
+    distances.delete(distances.min)
+    approximate_distance = distances.first
+    truck = Truck.new
+    truck.wants_to_park 1
+    truck.move_to @entrance
+    assigned_1 = truck.assigned_spot.coordinate
+    assigned_2 = truck.assigned_spot_2.coordinate
+    assert_in_epsilon DistanceCalculator.distance_between(assigned_1,assigned_2), approximate_distance, 0.001
+  end
+
+  def test_truck_releases_both_spots
+    truck = Truck.new
+    free_spots1 = @lot.free_spot_count
+    truck.wants_to_park 1
+    truck.move_to @entrance
+    free_spots2 = @lot.free_spot_count
+    assert free_spots1-free_spots2==2
+    spot1=truck.assigned_spot
+    spot2=truck.assigned_spot_2
+    truck.move_by(100)
+    refute @entrance.has_car? truck
+    assert @road1.has_car? truck
+    truck.move_by(100)
+    refute @road1.has_car? truck
+    assert spot1.has_car? truck
+    assert spot2.assigned_car== truck
+    truck.move_by(1)
+    refute spot1.has_car? truck
+    refute spot2.assigned_car== truck
+  end
+
+
 end
       

@@ -32,7 +32,6 @@ class ParkingRoad < Road
     end
   end
 
-
   def set_parking_lot(lot)
     @parking_lot = lot
   end
@@ -44,19 +43,16 @@ class ParkingRoad < Road
     return nil
   end
 
-  #def get_state(car)
-  #  state = super(car)
-  #  if state.target_spot.nil?; state.target_spot=find_spot(car)
-  #  state.distance_to_free_spot=closest_spot_to(car.coordinate)
-  #end
-  #
-  #def closest_spot_to(coord)
-  #  closest = nil
-  #  for spot in @spots
-  #    if closest.nil?; closest=spot end
-  #
-  #  end
-  #end
+  def free_double_spots?
+    return (not get_double_free_spot.nil?)
+  end
+
+  def get_double_free_spot
+    assign_left_right_arrays
+    result = get_double_free_spots_for_array @lefts
+    result||= get_double_free_spots_for_array @rights
+    return result
+  end
 
   #____P_R_I_V_A_T_E_____#
   private
@@ -65,14 +61,51 @@ class ParkingRoad < Road
     dx = $SPOT_LENGTH*@cosine
     dy = $SPOT_LENGTH*@sinus
     move_car($SPOT_LENGTH, fake) #skip first 6 meters
+    right_counter = 0
+    left_counter = 0
     while DistanceCalculator.distance_between(fake.coordinate, @coordinates[:end])>$SPOT_LENGTH
       c1 = Coordinate.new(fake.coordinate.x-dy/2, fake.coordinate.y+dx/2)
       p1 = ParkingSpot.new(fake.coordinate, c1, self, @angle, true)
+      p1.number=left_counter
       c2 = Coordinate.new(fake.coordinate.x+dy/2, fake.coordinate.y-dx/2)
       p2 = ParkingSpot.new(fake.coordinate, c2, self, @angle, false)
+      p2.number=right_counter
       move_car($SPOT_LENGTH, fake)
       @spots<<p1
       @spots<<p2
+      right_counter = right_counter + 1
+      left_counter = left_counter + 1
+    end
+  end
+
+  def assign_left_right_arrays
+    @lefts = Array.new
+    @rights = Array.new
+    @spots.each do |spot|
+      @lefts << spot unless (spot.occupied? or not spot.is_left)
+      @rights << spot unless (spot.occupied? or spot.is_left)
+    end
+  end
+
+  def get_double_free_spots_for_array(spots)
+    first=nil
+    results = Array.new
+    spots.each do |spot|
+      if first.nil?
+        first=spot
+        next
+      end
+      if spot.number==first.number+1
+        results[0]=first
+        results[1]=spot
+      else
+        first=spot
+      end
+    end
+    if results.length==2
+      return results
+    else
+      return nil
     end
   end
 

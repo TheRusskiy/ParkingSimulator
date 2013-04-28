@@ -61,7 +61,7 @@ class ParkingEntranceTest < MiniTest::Unit::TestCase
   end
 
   class FakeLot
-    def has_free_spots?
+    def has_free_spots?(number_of_spots)
       true
     end
     def assign_spot(car)

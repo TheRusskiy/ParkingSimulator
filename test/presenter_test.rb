@@ -105,13 +105,13 @@ class PresenterTest < MiniTest::Unit::TestCase
 
   def test_add_truck
     truck = Truck.new
-    road = Road.new(@c1, @c2) # somehow doesn't
-    truck.move_to(road)       #     work without placing to road
+    road = Road.new(@c1, @c2) # presenter won't show car
+    truck.move_to(road)       #     without placement
     length1 = @presenter.scene.items.length
     @presenter.add(truck)
     truck.draw_item.wont_be_nil
     length2 = @presenter.scene.items.length
-    assert_equal(length1+2, length2) # + text
+    assert_equal(length1+2, length2) # 2 == Truck + text
   end
 
 end

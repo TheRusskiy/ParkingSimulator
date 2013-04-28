@@ -6,6 +6,7 @@ class Car
   attr_reader :state
   attr_reader :length
   attr_reader :assigned_spot
+  attr_reader :required_spots
   $car_length=4
 
   def initialize
@@ -14,6 +15,7 @@ class Car
     @state = State.new
     @turns_to_wait = 0
     @stopped = false
+    @required_spots=1
   end
 
   def move_to(placement, starting_coordinate=nil)
@@ -63,5 +65,16 @@ class Truck < Car
   def initialize
     super
     @length=$truck_length
+    @assigned_spot_2=nil
+    @required_spots=2
+  end
+
+  def assigned_spot_2
+    @assigned_spot_2
+  end
+
+  def assigned_spot_2=(value)
+    @assigned_spot_2=value
+    @assigned_spot_2.assigned_car= self;
   end
 end
