@@ -12,16 +12,17 @@ class Window < Qt::MainWindow
     setCentralWidget(@w)
 
     @view = ParkingView.new(Qt::GraphicsScene.new)
-    @w.layout = Qt::GridLayout.new do |l|
-      l.addWidget(@view, 0, 0)
-      l.addWidget(createControlGroupBox, 1, 0)
-      #l.addWidget(createGridGroupBox, 1, 1)
-    end
-    adjustWindowSize(@w)
+    @w.layout = Qt::GridLayout.new
+    @w.layout.addWidget(@view, 0, 0, 1, 1)
+    @w.layout.addWidget(createControlGroupBox, 1, 0)
+    @w.layout.addWidget(createInformationGroupBox, 0, 3, 1, 1)
+    @w.layout.setRowStretch(0, 10)
+    @w.layout.setColumnStretch(0, 10)
     createMenus
     createStatusBar
 	  setWindowTitle('Parking lot simulator')
-    resize(@w.width, @w.height)
+    adjustWindowSize(@w)
+    resize(@w.width+600, @w.height)
 	end
 
   def adjustWindowSize(item)
@@ -33,7 +34,7 @@ class Window < Qt::MainWindow
       w1 = item.layout.itemAt(i).sizeHint.width
       w = w < w1 ? w1 : w
     end
-    item.resize(w+100, h+200)
+    item.resize(w+100, h)
   end
 
   def createLabel(text)
@@ -309,6 +310,23 @@ class Window < Qt::MainWindow
     layout.addWidget(nightSpinBox, 7, 0)
     layout.addWidget(@applyPricesButton, 8, 0)
     layout.setRowStretch(9, 1)
+    box.layout=layout
+    return box
+  end
+
+  def createInformationGroupBox
+    layout = Qt::GridLayout.new
+    box = Qt::GroupBox.new("Control Panel")
+    layout.addWidget w1=createTimeControls(), 0, 0, 1, 2
+    layout.addWidget w2=createUniformControls(), 0, 2, 1, 1
+    layout.addWidget w3=createNormalControls(), 0, 3, 1, 1
+    layout.addWidget w4=createExponentialControls(), 0, 4, 1, 1
+    layout.addWidget w5=createDeterminedControls(), 0, 5, 1, 1
+    layout.addWidget w6=createPriceControls(), 0, 6, 1, 1
+    w2.setVisible(false)
+    w3.setVisible(false)
+    w4.setVisible(false)
+
     box.layout=layout
     return box
   end
