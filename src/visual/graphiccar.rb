@@ -35,7 +35,7 @@ class GraphicCar < Qt::GraphicsItem
     @text.adjustSize
     #if @draw_text; @text.show; else @text.hide; end;
     painter.brush = @brush
-    painter.drawRect(0,0, @length, @width)
+    painter.drawRoundedRect(0,0, @length, @width, 1,1)
     #if @draw_text; painter.drawText(0, 0, 5, 5, Qt::TextSingleLine, "sdaasd") end
     #setVisible(true)
     #setPos(rand(100), rand(100))

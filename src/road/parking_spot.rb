@@ -26,7 +26,7 @@ class ParkingSpot
     if car.wants_to_park?
       car.turn
     end
-    free = @road.free_space?(@coordinates[:start])
+    free = @road.free_space?(car.length, @coordinates[:start])
     if free and not car.wants_to_park?
       #car.move_to @road
       car.placement=@road

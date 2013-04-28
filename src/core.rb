@@ -10,7 +10,7 @@ class Core
   def initialize(view)
     @cars = Array.new
     @view=view
-    @road_start = Coordinate.new(160, 100)
+    @road_start = Coordinate.new(180, 100)
     @road_end = Coordinate.new(0, 100)
     @road = Road.new(@road_start, @road_end)
 
@@ -19,18 +19,18 @@ class Core
     #@road2 = Road.new(@road2_start, @road2_end)
     #@road.extension=@road2
 
-    to_entrance=40
+    to_entrance=30
     @entrance_start = Coordinate.new(@road_start.x-to_entrance, @road.coordinate_at(to_entrance).y)
-    @entrance_end = Coordinate.new(100, 90)
+    @entrance_end = Coordinate.new(120, 90)
     @entrance = Road.new(@entrance_start, @entrance_end)
     @road.add_parking_entrance(@entrance, to_entrance)
 
     @lot = ParkingLot.new
     @lot.set_entrance @entrance
 
-    @road2_start = Coordinate.new(80, 20)
-    @road3_start = Coordinate.new(40, 20)
-    @road3_end = Coordinate.new(30, 90)
+    @road2_start = Coordinate.new(100, 20)
+    @road3_start = Coordinate.new(60, 20)
+    @road3_end = Coordinate.new(50, 90)
     @road1 = ParkingRoad.new(@entrance_end, @road2_start)
     @road2 = ParkingRoad.new(@road2_start, @road3_start)
     @road3 = ParkingRoad.new(@road3_start, @road3_end)
@@ -47,7 +47,7 @@ class Core
     @parking_exit.connect_at @road, to_initial_road
     @road3.extension=@parking_exit
 
-    @generator = CarGenerator.uniform(5)
+    @generator = CarGenerator.uniform(3)
     @tick_thread = TimerThread.new
     @presenter = Presenter.new(view, 4)
 
@@ -58,7 +58,7 @@ class Core
     @presenter.add(@entrance)
     @presenter.add(@parking_exit)
 
-    @tick_thread.set_frequency(30)
+    @tick_thread.set_frequency(60)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw
@@ -66,7 +66,7 @@ class Core
 
   def tick
     car = @generator.next_car
-    if car and @road.free_space?
+    if car and @road.free_space?(car.length)
       @cars<<car
       if rand(2)==0; car.wants_to_park 60 end
       car.move_to(@road)

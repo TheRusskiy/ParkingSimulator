@@ -17,7 +17,7 @@ class Road
     @angle = DistanceCalculator.angle_between(c1, c2)
     @sinus = Math.sin(@angle)
     @cosine = Math.cos(@angle)
-    @safe_gap=5
+    @safe_gap=1
     @coordinate_to_connect=nil
   end
 
@@ -35,9 +35,14 @@ class Road
     DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])
   end
 
-  def free_space?(coordinate = @coordinates[:start])
+  def free_space?(free_space, coordinate = nil)
+    coordinate||=@coordinates[:start]
+    #if coordinate.is_a? Fixnum #method overload
+    #  free_space=coordinate;
+    #  coordinate = @coordinates[:start]
+    #end
     for existing_car in @cars
-      return false unless DistanceCalculator.is_safe_between?(existing_car, coordinate, @safe_gap)
+      return false unless DistanceCalculator.is_safe_between?(existing_car, coordinate, free_space+@safe_gap)
     end
     return true
   end
@@ -52,7 +57,7 @@ class Road
   def include_car(car)
     if @cars.include?(car); raise CarAddedTwiceException end
     for existing_car in @cars
-      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car, car, @safe_gap)
+      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car, car, 0)
     end
     @cars << car
   end
@@ -115,15 +120,23 @@ class Road
   private
   def distance_to_closest_car_for(my_car)
     my_car_to_end=DistanceCalculator.distance_between(my_car.coordinate, @coordinates[:end])
-    current_distance=0
+    current_distance=my_car_to_end
+    closest_car=nil
     for other_car in @cars do
       other_car_to_end = DistanceCalculator.distance_between(other_car.coordinate, @coordinates[:end])
-      # if END < CurrDist < OtherCar < MyCar : CurrDist=OtherCar
-      if other_car!=my_car and other_car_to_end<my_car_to_end and other_car_to_end>current_distance
-        current_distance=other_car_to_end+other_car.length+@safe_gap # '+' because method returns '-current_distance'
+      ## if END < CurrDist < OtherCar < MyCar : CurrDist=OtherCar
+      #if other_car!=my_car and other_car_to_end<my_car_to_end and other_car_to_end>current_distance
+      #  current_distance=other_car_to_end+my_car.length+other_car.length+@safe_gap # '+' because method returns '-current_distance'
+      #end
+      if other_car!=my_car and other_car_to_end<my_car_to_end and my_car_to_end-other_car_to_end<current_distance
+        current_distance=my_car_to_end-other_car_to_end
+        closest_car=other_car
       end
     end
-    return my_car_to_end - current_distance
+    if closest_car
+      current_distance=current_distance-my_car.length
+    end
+    return current_distance
   end
 
   def move_car(by_space, car)
@@ -137,7 +150,7 @@ class Road
 
   def move_car_to(car, placement, starting_coordinate=nil)
     if placement;
-      unless placement.free_space?
+      if not placement.free_space?(car.length+@safe_gap, starting_coordinate)
         car.stopped=true
         return
       end
