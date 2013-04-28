@@ -8,7 +8,6 @@ class Window < Qt::MainWindow
 
   def initialize()
 		super
-    puts self.methods
     @w = Qt::Widget.new
     setCentralWidget(@w)
 
@@ -436,6 +435,16 @@ class Window < Qt::MainWindow
 
     #@formatMenu = @viewMenu.addMenu("Scale")
     #@formatMenu.addAction(@boldAct)
+
+    @structureMenu = menuBar().addMenu("Structure")
+    @setStructureAct = Qt::Action.new("Map #1", self)
+    @setStructureAct.statusTip = "Choose parking lot structure"
+    @structureMenu.addAction(@setStructureAct)
+    connect(@setStructureAct, SIGNAL('triggered()'), self, SLOT('selectStructure1()'))
+    @setStructureAct2 = Qt::Action.new("Map #2", self)
+    @setStructureAct2.statusTip = "Choose parking lot structure"
+    @structureMenu.addAction(@setStructureAct2)
+    connect(@setStructureAct2, SIGNAL('triggered()'), self, SLOT('selectStructure2()'))
 
     @helpMenu = menuBar().addMenu("Help")
     @helpMenu.addAction(@aboutAct)
