@@ -73,7 +73,7 @@ class ParkingSpot
     not @assigned_car.nil?
   end
 
-  def add_car(car)
+  def add_car(car, starting_coordinate)
     @car=car
     #if is_left coord = @coordinates[:start].with_x
     coord = @coordinates[:end]

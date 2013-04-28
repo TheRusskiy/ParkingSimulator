@@ -16,10 +16,11 @@ class Car
     @stopped = false
   end
 
-  def move_to(placement)
+  def move_to(placement, starting_coordinate=nil)
     @placement=placement
-    @coordinate=@placement.coordinates(:start)
-    @placement.add_car(self)
+    starting_coordinate||=@placement.coordinates(:start)
+    @coordinate=starting_coordinate
+    @placement.add_car(self, @coordinate)
   end
 
   def move_by(space)

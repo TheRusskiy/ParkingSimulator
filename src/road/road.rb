@@ -17,7 +17,7 @@ class Road
     @angle = DistanceCalculator.angle_between(c1, c2)
     @sinus = Math.sin(@angle)
     @cosine = Math.cos(@angle)
-    @safe_gap=1
+    @safe_gap=0
     @coordinate_to_connect=nil
   end
 
@@ -47,9 +47,9 @@ class Road
     return true
   end
 
-  def add_car(car)
+  def add_car(car, starting_coordinate=@coordinates[:start])
     include_car car
-    car.coordinate=@coordinates[:start]
+    car.coordinate=starting_coordinate
     car.state.rotation = @angle
     assign_parking_spot(car)
   end
@@ -57,7 +57,7 @@ class Road
   def include_car(car)
     if @cars.include?(car); raise CarAddedTwiceException end
     for existing_car in @cars
-      raise AccidentException unless DistanceCalculator.is_safe_between?(existing_car, car, 0)
+      raise AccidentException.new(existing_car, car) unless DistanceCalculator.is_safe_between?(existing_car, car, car.length)
     end
     @cars << car
   end
@@ -115,6 +115,9 @@ class Road
     @length=DistanceCalculator.distance_between(@coordinate_to_connect, @coordinates[:start])
   end
 
+  def to_s
+    'start:'+@coordinates[:start].inspect+', end:'+@coordinates[:end].inspect
+  end
 
   #____P_R_I_V_A_T_E_____#
   private
@@ -134,7 +137,7 @@ class Road
       end
     end
     if closest_car
-      current_distance=current_distance-my_car.length
+      current_distance=current_distance-my_car.length-@safe_gap
     end
     return current_distance
   end
@@ -155,7 +158,7 @@ class Road
         return
       end
       car.stopped=false
-      car.move_to placement
+      car.move_to placement, starting_coordinate
     end
     @cars.delete(car)
     car.placement=placement
@@ -167,5 +170,6 @@ class Road
       @parking_lot.assign_spot(car)
     end
   end
+
 
 end

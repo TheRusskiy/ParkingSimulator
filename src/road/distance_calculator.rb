@@ -16,7 +16,6 @@ class DistanceCalculator
     #... so you have to pass it's length in 'Gap'
     if behind.respond_to? :coordinate #it is car, probably
       coord_behind = behind.coordinate
-      #behind_length = behind.length
     else
       coord_behind = behind
     end

@@ -28,8 +28,8 @@ class Core
     @lot = ParkingLot.new
     @lot.set_entrance @entrance
 
-    @road2_start = Coordinate.new(100, 20)
-    @road3_start = Coordinate.new(60, 20)
+    @road2_start = Coordinate.new(100, 40)
+    @road3_start = Coordinate.new(60, 40)
     @road3_end = Coordinate.new(50, 90)
     @road1 = ParkingRoad.new(@entrance_end, @road2_start)
     @road2 = ParkingRoad.new(@road2_start, @road3_start)
@@ -47,7 +47,7 @@ class Core
     @parking_exit.connect_at @road, to_initial_road
     @road3.extension=@parking_exit
 
-    @generator = CarGenerator.uniform(3)
+    @generator = CarGenerator.uniform(1)
     @tick_thread = TimerThread.new
     @presenter = Presenter.new(view, 4)
 
@@ -58,7 +58,7 @@ class Core
     @presenter.add(@entrance)
     @presenter.add(@parking_exit)
 
-    @tick_thread.set_frequency(60)
+    @tick_thread.set_frequency(100)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw
@@ -66,15 +66,18 @@ class Core
 
   def tick
     car = @generator.next_car
-    if car and @road.free_space?(car.length)
+    if car and @road.free_space?(car.length+@road.safe_gap)
       @cars<<car
       if rand(2)==0; car.wants_to_park 60 end
       car.move_to(@road)
       @presenter.add(car)
+      @generator.spawned_car=nil
+    else
+      if car; @generator.spawned_car=car end #preserve trucks in high load
     end
-    for car in @cars
-      car.move_by(1)
-      if car.placement.nil?; @cars.delete(car); end;
+    for each_car in @cars
+      each_car.move_by(0.5)
+      if each_car.placement.nil?; @cars.delete(each_car); end;
     end
     @view.show
   end
