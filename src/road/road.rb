@@ -23,11 +23,11 @@ class Road
 
   def get_state(car)
     state= car.state
-    beetween_car_and_end = DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])
-    state.set_available_space(beetween_car_and_end)
-    if @cars.length>1
+    #beetween_car_and_end = DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])
+    #state.set_available_space(beetween_car_and_end)
+    #if @cars.length>1
       state.set_available_space distance_to_closest_car_for(car)
-    end
+    #end
     return state
   end
 
@@ -131,7 +131,7 @@ class Road
       #if other_car!=my_car and other_car_to_end<my_car_to_end and other_car_to_end>current_distance
       #  current_distance=other_car_to_end+my_car.length+other_car.length+@safe_gap # '+' because method returns '-current_distance'
       #end
-      if other_car!=my_car and other_car_to_end<my_car_to_end and my_car_to_end-other_car_to_end<current_distance
+      if other_car!=my_car and other_car_to_end<my_car_to_end and my_car_to_end-other_car_to_end<=current_distance
         current_distance=my_car_to_end-other_car_to_end
         closest_car=other_car
       end

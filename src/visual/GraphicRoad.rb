@@ -15,6 +15,7 @@ class GraphicRoad < Qt::GraphicsItem
     @pen.setWidth(2)
     #@pen.setCosmetic(true)
     setCacheMode(0)
+    setZValue(4)
   end
 
   def boundingRect

@@ -1,6 +1,10 @@
 class GraphicCar < Qt::GraphicsItem
+  attr_writer :car
   def initialize(length=4)
     super(nil)
+
+    @car=nil
+
     @length=length
     @width=2
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
@@ -14,6 +18,7 @@ class GraphicCar < Qt::GraphicsItem
     setAcceptHoverEvents(true)
     @text = Qt::GraphicsTextItem.new("sdasda", self)
     showText
+    setZValue(5)
   end
 
   def boundingRect
@@ -31,7 +36,8 @@ class GraphicCar < Qt::GraphicsItem
   def paint(painter, arg, widget)
     @text.setRotation(0-rotation)
     @text.setScale(1.0/scale)
-    @text.setPlainText(Integer(rotation).to_s)
+    @text.setDefaultTextColor(@color)
+    @text.setPlainText(Integer(pos.x/scale).to_s+':'+Integer(pos.y/scale).to_s+': space='+@car.state.get_available_space.round(2).to_s)
     @text.adjustSize
     #if @draw_text; @text.show; else @text.hide; end;
     painter.brush = @brush

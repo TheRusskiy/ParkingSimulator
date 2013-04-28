@@ -10,14 +10,44 @@ class Core
   def initialize(view)
     @cars = Array.new
     @view=view
+
+
+    ##_________________________
+    #@road_start = Coordinate.new(80, 100)
+    #@road_end = Coordinate.new(0, 100)
+    #@road = Road.new(@road_start, @road_end)
+    #to_entrance=10
+    #@entrance_start = Coordinate.new(@road_start.x-to_entrance, @road.coordinate_at(to_entrance).y)
+    #@entrance_end = Coordinate.new(40, 90)
+    #@entrance = Road.new(@entrance_start, @entrance_end)
+    #@road.add_parking_entrance(@entrance, to_entrance)
+    #
+    #@lot = ParkingLot.new
+    #@lot.set_entrance @entrance
+    #
+    #@road2_start = Coordinate.new(100, 80)
+    #@road3_start = Coordinate.new(50, 80)
+    #@road3_end = Coordinate.new(20, 90)
+    #@road1 = Road.new(@entrance_end, @road3_start)
+    ##@road2 = ParkingRoad.new(@road2_start, @road3_start)
+    #@road3 = ParkingRoad.new(@road3_start, @road3_end)
+    #@entrance.extension=@road1
+    #@road1.extension=@road3
+    ##@road2.extension=@road3
+    ##@lot.add_road_segment @road1
+    ##@lot.add_road_segment @road2
+    #@lot.add_road_segment @road3
+    #
+    #to_initial_road = 70
+    #@parking_exit_coord = @road.coordinate_at to_initial_road
+    #@parking_exit = Road.new(@road3_end, @parking_exit_coord)
+    #@parking_exit.connect_at @road, to_initial_road
+    #@road3.extension=@parking_exit
+
+
     @road_start = Coordinate.new(180, 100)
     @road_end = Coordinate.new(0, 100)
     @road = Road.new(@road_start, @road_end)
-
-    #@road2_start = Coordinate.new(100, 0)
-    #@road2_end = Coordinate.new(100, 100)
-    #@road2 = Road.new(@road2_start, @road2_end)
-    #@road.extension=@road2
 
     to_entrance=30
     @entrance_start = Coordinate.new(@road_start.x-to_entrance, @road.coordinate_at(to_entrance).y)
