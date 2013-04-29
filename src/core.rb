@@ -8,11 +8,20 @@ require '../src/road/parking_lot'
 require '../src/road/parking_spot'
 require '../src/cashier'
 class Core
-  attr_accessor :controller, :cashier
+  attr_accessor :controller, :cashier, :meaningfull_tick
+  attr_reader :uniform_t
+  attr_reader :normal_variance
+  attr_reader :normal_mean
+  attr_reader :exponential_rate
+  attr_reader :determined_interval
   def initialize(view)
     @cars = Array.new
     @view=view
     @cashier = Cashier.new
+    @tick_divisor=1
+    @tick_acc=0
+    @normal_variance=1
+    @normal_mean=1
 
 
     ##_________________________
@@ -82,7 +91,11 @@ class Core
     @parking_exit.connect_at @road, to_initial_road
     @road3.extension=@parking_exit
 
-    @generator = CarGenerator.uniform(10)
+    @uniform = CarGenerator.uniform(10)
+    @normal = CarGenerator.normal(10, 2)
+    @exponential = CarGenerator.exponential(10)
+    @determined = CarGenerator.determined(10)
+    @generator = @exponential
     @tick_thread = TimerThread.new
     @presenter = Presenter.new(view, 4)
 
@@ -115,7 +128,14 @@ class Core
   end
 
   def tick
-    car = @generator.next_car
+    @tick_acc=@tick_acc+1
+    if @tick_acc==@tick_divisor
+      @meaningfull_tick=true
+      @tick_acc=0
+    else
+      @meaningfull_tick=false
+    end
+    if @meaningfull_tick; car = @generator.next_car end
     if car and @road.free_space?(car.length+@road.safe_gap)
       @cars<<car
       car.cashier=@cashier
@@ -185,4 +205,50 @@ class Core
     end
   end
 
-end
+  def selectUniform()
+    @generator=@uniform
+  end
+
+  def selectExponential()
+    @generator=@exponential
+  end
+
+  def selectNormal()
+    @generator=@normal
+  end
+
+  def selectDetermined()
+    @generator=@determined
+  end
+
+  def slow_simulation_by(times)
+    @tick_divisor=times
+    @tick_acc=0
+  end
+
+  def uniform_t=(value)
+    @uniform_t=value
+    @uniform=CarGenerator.uniform(value)
+  end
+
+  def normal_variance=(value)
+    @normal_variance=value
+    @normal=CarGenerator.normal(@normal_mean, value)
+  end
+
+  def normal_mean=(value)
+    @normal_mean=value
+    @normal=CarGenerator.normal(value, @normal_variance)
+  end
+
+  def exponential_rate=(value)
+    @exponential_rate=value
+    @exponential=CarGenerator.exponential(value)
+  end
+
+  def determined_interval=(value)
+    @determined_interval=value
+    @determined=CarGenerator.determined(value)
+  end
+
+  end

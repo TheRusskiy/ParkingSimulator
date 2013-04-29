@@ -5,7 +5,8 @@ class Window < Qt::MainWindow
   attr_reader :view
   attr_accessor :controller
 
-  slots 'applyControls()', 'startStop()'
+  slots 'applyControls()', 'startStop()', 'selectUniform()', 'selectExponential()', 'selectNormal()',
+        'selectDetermined()', 'applyUniform()', 'applyNormal()', 'applyExponential()', 'applyDetermined()'
 
   def applyControls()
     @controller.simulation_speed= @simSpeedSpinBox.value
@@ -19,15 +20,72 @@ class Window < Qt::MainWindow
     @controller.refresh_model
   end
 
+  def setRandomProperties()
+    @controller.uniform_t= @uniformTSpinBox.value
+    @controller.normal_variance= @varianceSpinBox.value
+    @controller.normal_mean= @normalMeanSpinBox.value
+    @controller.exponential_rate = @rateSpinBox.value
+    @controller.determined_interval = @determinedSpinBox.value
+    @controller.refresh_random_params
+  end
+
   def startStop()
     @controller.startStop()
   end
 
+  def selectUniform()
+    @controller.selectUniform
+    @uni.setVisible(true)
+    @norm.setVisible(false)
+    @exp.setVisible(false)
+    @det.setVisible(false)
+  end
+
+  def selectExponential()
+    @controller.selectExponential
+    @uni.setVisible(false)
+    @norm.setVisible(false)
+    @exp.setVisible(true)
+    @det.setVisible(false)
+  end
+
+  def selectNormal()
+    @controller.selectNormal
+    @uni.setVisible(false)
+    @norm.setVisible(true)
+    @exp.setVisible(false)
+    @det.setVisible(false)
+  end
+
+  def selectDetermined()
+    @controller.selectDetermined()
+    @uni.setVisible(false)
+    @norm.setVisible(false)
+    @exp.setVisible(false)
+    @det.setVisible(true)
+  end
+
+  def applyUniform()
+    setRandomProperties()
+  end
+
+  def applyNormal()
+    setRandomProperties()
+  end
+
+  def applyExponential()
+    setRandomProperties()
+  end
+
+  def applyDetermined()
+    setRandomProperties()
+  end
+
   def initialize()
 		super
+    @controller=nil
     @w = Qt::Widget.new
     setCentralWidget(@w)
-
     @view = ParkingView.new(Qt::GraphicsScene.new)
     @w.layout = Qt::GridLayout.new
     @w.layout.addWidget(@view, 0, 0)
@@ -67,14 +125,14 @@ class Window < Qt::MainWindow
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new("Control Panel")
     layout.addWidget w1=createTimeControls(), 0, 0, 1, 2
-    layout.addWidget w2=createUniformControls(), 0, 2, 1, 1
-    layout.addWidget w3=createNormalControls(), 0, 3, 1, 1
-    layout.addWidget w4=createExponentialControls(), 0, 4, 1, 1
-    layout.addWidget w5=createDeterminedControls(), 0, 5, 1, 1
+    layout.addWidget @uni=createUniformControls(), 0, 2, 1, 1
+    layout.addWidget @norm=createNormalControls(), 0, 3, 1, 1
+    layout.addWidget @exp=createExponentialControls(), 0, 4, 1, 1
+    layout.addWidget @det=createDeterminedControls(), 0, 5, 1, 1
     layout.addWidget w6=createPriceControls(), 0, 6, 1, 1
-    w2.setVisible(false)
-    w3.setVisible(false)
-    w4.setVisible(false)
+    @norm.setVisible(false)
+    @exp.setVisible(false)
+    @det.setVisible(false)
 
     box.layout=layout
     return box
@@ -187,7 +245,7 @@ class Window < Qt::MainWindow
     #T:
     @uniform_t=[1, 600, 20]
     uniformTLabel = Qt::Label.new(tr("T %d..%d:" % [@uniform_t[0], @uniform_t[1]]))
-    uniformTSpinBox = Qt::SpinBox.new do |i|
+    @uniformTSpinBox = Qt::SpinBox.new do |i|
       i.range = @uniform_t[0]..@uniform_t[1]
       i.singleStep = 1
       i.value = @uniform_t[2]
@@ -196,7 +254,7 @@ class Window < Qt::MainWindow
     end
     @applyUniformButton = createButton("Apply", SLOT('applyUniform()'))
     layout.addWidget(uniformTLabel, 0, 0)
-    layout.addWidget(uniformTSpinBox, 1, 0)
+    layout.addWidget(@uniformTSpinBox, 1, 0)
     layout.addWidget(@applyUniformButton, 2, 0)
     layout.setRowStretch(3, 1)
 
@@ -210,7 +268,7 @@ class Window < Qt::MainWindow
     #Mean (location):
     @normal_mean=[0, 100, 50]
     normalMeanLabel = Qt::Label.new(tr("Mean (location) %d..%d:" % [@normal_mean[0], @normal_mean[1]]))
-    normalMeanSpinBox = Qt::DoubleSpinBox.new do |i|
+    @normalMeanSpinBox = Qt::DoubleSpinBox.new do |i|
       i.range = @normal_mean[0]..@normal_mean[1]
       i.singleStep = 1
       i.value = @normal_mean[2]
@@ -219,7 +277,7 @@ class Window < Qt::MainWindow
     #Variance (squared scale):
     @normal_variance=[0, 100, 10]
     varianceLabel = Qt::Label.new(tr("Variance (squared scale) %d..%d:" % [@normal_variance[0], @normal_variance[1]]))
-    varianceSpinBox = Qt::DoubleSpinBox.new do |i|
+    @varianceSpinBox = Qt::DoubleSpinBox.new do |i|
       i.range = @normal_variance[0]..@normal_variance[1]
       i.singleStep = 1
       i.value = @normal_variance[2]
@@ -227,9 +285,9 @@ class Window < Qt::MainWindow
     end
     @applyNormalButton = createButton("Apply", SLOT('applyNormal()'))
     layout.addWidget(normalMeanLabel, 0, 0)
-    layout.addWidget(normalMeanSpinBox, 1, 0)
+    layout.addWidget(@normalMeanSpinBox, 1, 0)
     layout.addWidget(varianceLabel, 2, 0)
-    layout.addWidget(varianceSpinBox, 3, 0)
+    layout.addWidget(@varianceSpinBox, 3, 0)
     layout.addWidget(@applyNormalButton, 4, 0)
     layout.setRowStretch(5, 1)
 
@@ -241,17 +299,17 @@ class Window < Qt::MainWindow
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new('Exponential distribution controls')
     #Scale (=1/Rateλ):
-    @scale=[1, 100, 20]
-    scaleLabel = Qt::Label.new(tr("Scale %d..%d:" % [@scale[0], @scale[1]]))
-    scaleSpinBox = Qt::DoubleSpinBox.new do |i|
-      i.range = @scale[0]..@scale[1]
+    @rate=[0.1, 100, 10]
+    rateLabel = Qt::Label.new(tr("Rate (lambda) %f..%d:" % [@rate[0], @rate[1]]))
+    @rateSpinBox = Qt::DoubleSpinBox.new do |i|
+      i.range = @rate[0]..@rate[1]
       i.singleStep = 1
-      i.value = @scale[2]
-      i.prefix = 'Rate(lambda) = 1 / '
+      i.value = @rate[2]
+      i.prefix = ''
     end
     @applyExponentialButton = createButton("Apply", SLOT('applyExponential()'))
-    layout.addWidget(scaleLabel, 0, 0)
-    layout.addWidget(scaleSpinBox, 1, 0)
+    layout.addWidget(rateLabel, 0, 0)
+    layout.addWidget(@rateSpinBox, 1, 0)
     layout.addWidget(@applyExponentialButton, 2, 0)
     layout.setRowStretch(3, 1)
     box.layout=layout
@@ -264,7 +322,7 @@ class Window < Qt::MainWindow
     #Time interval:
     @determined=[1, 1000, 20]
     determinedLabel = Qt::Label.new(tr("Time interval %d..%d:" % [@determined[0], @determined[1]]))
-    determinedSpinBox = Qt::SpinBox.new do |i|
+    @determinedSpinBox = Qt::SpinBox.new do |i|
       i.range = @determined[0]..@determined[1]
       i.singleStep = 1
       i.value = @determined[2]
@@ -273,7 +331,7 @@ class Window < Qt::MainWindow
     end
     @applyDeterminedButton = createButton("Apply", SLOT('applyDetermined()'))
     layout.addWidget(determinedLabel, 0, 0)
-    layout.addWidget(determinedSpinBox, 1, 0)
+    layout.addWidget(@determinedSpinBox, 1, 0)
     layout.addWidget(@applyDeterminedButton, 2, 0)
     layout.setRowStretch(3, 1)
     box.layout=layout
@@ -435,7 +493,7 @@ class Window < Qt::MainWindow
     @viewMenu.addAction(@selectExponentialAct)
     connect(@selectExponentialAct, SIGNAL('triggered()'), self, SLOT('selectExponential()'))
 
-    @selectNormalAct = Qt::Action.new("Uniform", self)
+    @selectNormalAct = Qt::Action.new("Normal", self)
     @selectNormalAct.statusTip = "Set normal distribution"
     @viewMenu.addAction(@selectNormalAct)
     connect(@selectNormalAct, SIGNAL('triggered()'), self, SLOT('selectNormal()'))
