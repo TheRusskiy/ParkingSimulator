@@ -6,7 +6,11 @@ class Window < Qt::MainWindow
   attr_accessor :controller
 
   slots 'applyControls()', 'startStop()', 'selectUniform()', 'selectExponential()', 'selectNormal()',
-        'selectDetermined()', 'applyUniform()', 'applyNormal()', 'applyExponential()', 'applyDetermined()'
+        'selectDetermined()', 'applyUniform()', 'applyNormal()', 'applyExponential()', 'applyDetermined()', 'closeProgram()'
+
+  def closeProgram()
+    exit
+  end
 
   def applyControls()
     @controller.simulation_speed= @simSpeedSpinBox.value
@@ -215,8 +219,10 @@ class Window < Qt::MainWindow
       i.value = @p_safe[2]
       i.suffix = ' meters'
     end
-    @applyControlsButton = createButton("Apply", SLOT('applyControls()'))
+
     @startStopControlsButton = createButton("Start/Stop", SLOT('startStop()'), "Start/Stop simulation")
+    @startStopControlsButton.shortcut=Qt::KeySequence.new( tr("space") )
+    @applyControlsButton = createButton("Apply", SLOT('applyControls()'))
     layout.addWidget(simSpeedLabel, 0, 0)
     layout.addWidget(@simSpeedSpinBox, 1, 0)
     layout.addWidget(carSpeedLabel, 2, 0)
