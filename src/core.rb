@@ -23,39 +23,6 @@ class Core
     @normal_variance=1
     @normal_mean=1
 
-    ##_________________________
-    #@road_start = Coordinate.new(80, 100)
-    #@road_end = Coordinate.new(0, 100)
-    #@road = Road.new(@road_start, @road_end)
-    #to_entrance=10
-    #@entrance_start = Coordinate.new(@road_start.x-to_entrance, @road.coordinate_at(to_entrance).y)
-    #@entrance_end = Coordinate.new(40, 90)
-    #@entrance = Road.new(@entrance_start, @entrance_end)
-    #@road.add_parking_entrance(@entrance, to_entrance)
-    #
-    #@lot = ParkingLot.new
-    #@lot.set_entrance @entrance
-    #
-    #@road2_start = Coordinate.new(100, 80)
-    #@road3_start = Coordinate.new(50, 80)
-    #@road3_end = Coordinate.new(20, 90)
-    #@road1 = Road.new(@entrance_end, @road3_start)
-    ##@road2 = ParkingRoad.new(@road2_start, @road3_start)
-    #@road3 = ParkingRoad.new(@road3_start, @road3_end)
-    #@entrance.extension=@road1
-    #@road1.extension=@road3
-    ##@road2.extension=@road3
-    ##@lot.add_road_segment @road1
-    ##@lot.add_road_segment @road2
-    #@lot.add_road_segment @road3
-    #
-    #to_initial_road = 70
-    #@parking_exit_coord = @road.coordinate_at to_initial_road
-    #@parking_exit = Road.new(@road3_end, @parking_exit_coord)
-    #@parking_exit.connect_at @road, to_initial_road
-    #@road3.extension=@parking_exit
-
-
     p_height=40
     p_length=180
     @road_start = Coordinate.new(p_length, p_height)
@@ -128,7 +95,7 @@ class Core
 
   def tick
     @tick_acc=@tick_acc+1
-    if @tick_acc==@tick_divisor
+    if @tick_acc>=@tick_divisor
       @meaningful_tick=true
       @tick_acc=0
     else
@@ -137,6 +104,7 @@ class Core
     if @meaningful_tick;
       car = @generator.next_car
     end
+    @controller.force_draw
     @cashier.turn #<<controller already passed appropriately scaled time
     if car and @road.free_space?(car.length+@road.safe_gap)
       @cars<<car
@@ -207,13 +175,17 @@ class Core
     end
   end
 
-  def selectGenerator(generator)
+  def select_generator(generator)
     case generator
-      when "uniform"; @generator=@uniform
-      when "exponential"; @generator=@exponential
-      when "normal"; @generator=@normal
-      when "determined"; @generator=@determined
+      when "uniform"; @generator=@uniform; @generator_name="uniform"
+      when "exponential"; @generator=@exponential; @generator_name="exponential"
+      when "normal"; @generator=@normal; @generator_name="normal"
+      when "determined"; @generator=@determined; @generator_name="determined"
     end
+  end
+
+  def reassign_generator()
+    select_generator(@generator_name)
   end
 
   def slow_simulation_by(times)
@@ -226,7 +198,7 @@ class Core
     @uniform=CarGenerator.uniform(value)
   end
 
-  def normal_mean_and_variance=(mean, variance)
+  def normal_mean_and_variance(mean, variance)
     @normal_mean=variance
     @normal_variance = mean
     @normal=CarGenerator.normal(mean, variance)

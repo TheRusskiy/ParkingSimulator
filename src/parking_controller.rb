@@ -16,12 +16,12 @@ class ParkingController
   attr_accessor :imported
   attr_accessor :truck
   attr_accessor :night
-  alias :dis :discretization
   def initialize(core, window)
     @core = core
     @core.controller=self
     @view = window
     @view.controller=self
+    @cashier=@core.cashier
   #  TODO fetch default values from view
   end
   def refresh_model
@@ -37,7 +37,6 @@ class ParkingController
   end
 
   def refresh_prices
-    @cashier=@core.cashier
     @cashier.domestic_price=@domestic
     @cashier.imported_price=@imported
     @cashier.truck_price=@truck
@@ -46,13 +45,18 @@ class ParkingController
 
   def refresh_random_params
     @core.uniform_t= @uniform_t
-    @core.normal_mean_and_variance= @normal_mean, @normal_variance
+    @core.normal_mean_and_variance(@normal_mean, @normal_variance)
     @core.exponential_rate = @exponential_rate
     @core.determined_interval = @determined_interval
+    @core.reassign_generator
   end
 
   def startStop()
     @core.startStop()
+  end
+
+  def force_draw()
+    @view.display_information(@cashier)
   end
 
   def select_generator(name)

@@ -1,6 +1,41 @@
 require_relative 'borderlayout'
 require_relative 'parkingview'
-	
+
+class TimeSetter
+  attr_accessor :job
+end
+
+class DigitalClock < Qt::LCDNumber
+  attr_accessor :time
+  # Constructs a DigitalClock widget
+  def initialize(parent, time_setter)
+    super(parent)
+    @time = Time.now
+    setSegmentStyle(Filled)
+    showTime()
+    resize(150, 150)
+    time_setter.job=(lambda{|t| setTime(t);})
+  end
+
+  #def forward(seconds)
+  #  @time = @time + seconds
+  #  showTime
+  #end
+
+  def setTime(time)
+    @time = time
+    showTime
+  end
+
+  def showTime()
+    hour = @time.hour.to_s
+    hour = hour.length==1 ? '0'+hour : hour
+    minutes = @time.min.to_s
+    minutes = minutes.length==1 ? '0'+minutes : minutes
+    display(hour+":"+minutes)
+  end
+end
+
 class Window < Qt::MainWindow
   attr_reader :view
   attr_accessor :controller
@@ -393,16 +428,14 @@ class Window < Qt::MainWindow
   def createInformationGroupBox
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new("Information Panel")
-    layout.addWidget @clock=createClock(), 0, 0, 1, 1
+    @clocker = TimeSetter.new
+    layout.addWidget @clock=DigitalClock.new(nil,@clocker), 0, 0, 1, 1
     layout.addWidget @clock=createStatistics(), 0, 1, 1, 2
     layout.addWidget @table=createTable(), 1, 0, 3, 3
     box.layout=layout
     return box
   end
 
-  def createClock
-    return DigitalClock.new
-  end
 
   def createStatistics
     layout = Qt::GridLayout.new
@@ -523,33 +556,13 @@ class Window < Qt::MainWindow
     @helpMenu.addAction(@aboutAct)
     @helpMenu.addAction(@helpAct)
   end
-end
-class DigitalClock < Qt::LCDNumber
-  attr_accessor :time
-  # Constructs a DigitalClock widget
-  def initialize(parent = nil)
-    super(parent)
-    @time = Time.now
-    setSegmentStyle(Filled)
-    showTime()
-    resize(150, 150)
+
+  def display_information(cashier)
+    time=cashier.time
+    @clocker.job.call(time)
+    #s=@clock
+    #k=@clock.time
+    #s.setTime(cashier.time)
   end
 
-  def forward(seconds)
-    @time = @time + seconds
-    showTime
-  end
-
-  def setTime(time)
-    @time = time
-    showTime
-  end
-
-  def showTime()
-    hour = @time.hour.to_s
-    hour = hour.length==1 ? '0'+hour : hour
-    minutes = @time.min.to_s
-    minutes = minutes.length==1 ? '0'+minutes : minutes
-    display(hour+":"+minutes)
-  end
 end

@@ -11,7 +11,7 @@ class GraphicCar < Qt::GraphicsItem
     @brush = Qt::Brush.new(@color)
     setAcceptHoverEvents(true)
     @text = Qt::GraphicsTextItem.new("", self)
-    hideText
+    showText
     setZValue(5)
   end
 
@@ -28,6 +28,11 @@ class GraphicCar < Qt::GraphicsItem
   end
 
   def paint(painter, arg, widget)
+    if @car.wants_to_park_time>0
+      showText
+    else
+      hideText
+    end
     @polygon||=get_car_polygon
     if @draw_text;
       adjust_text_setting
@@ -55,7 +60,8 @@ class GraphicCar < Qt::GraphicsItem
     @text.setRotation(0-rotation)
     @text.setScale(2.0/scale)
     @text.setDefaultTextColor(@color)
-    @text.setPlainText(Integer(pos.x/scale).to_s+':'+Integer(pos.y/scale).to_s)
+    #Integer(pos.x/scale).to_s+':'+Integer(pos.y/scale).to_s+
+    @text.setPlainText((@car.wants_to_park_time/60).round.to_s+'m')
     @text.adjustSize
   end
 

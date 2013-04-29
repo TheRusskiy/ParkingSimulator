@@ -43,6 +43,10 @@ class Car
     @turns_to_wait>0
   end
 
+  def wants_to_park_time
+    @turns_to_wait
+  end
+
   def wants_to_park(value)
     @turns_to_wait=value
   end
@@ -64,7 +68,6 @@ class Car
     @assigned_spot=spot
     if spot; spot.assigned_car= self; end
   end
-
 end
 
 class Truck < Car

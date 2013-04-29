@@ -19,6 +19,7 @@ class Cashier
 
   def turn
     @ticks=+1
-    @time=+@time_scale
+    @time=@time+@time_scale
+    s=1
   end
 end
