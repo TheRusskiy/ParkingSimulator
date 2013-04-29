@@ -25,4 +25,7 @@ class ParkingController
     @core.set_max_parking_time (@min_parking_time+@max_parking_time)*60 # max is shift from min
     @core.set_safe_gap @safe_gap
   end
+  def startStop()
+    @core.startStop()
+  end
 end

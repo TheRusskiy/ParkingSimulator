@@ -5,7 +5,7 @@ class Window < Qt::MainWindow
   attr_reader :view
   attr_accessor :controller
 
-  slots 'applyControls()'
+  slots 'applyControls()', 'startStop()'
 
   def applyControls()
     @controller.simulation_speed= @simSpeedSpinBox.value
@@ -17,6 +17,10 @@ class Window < Qt::MainWindow
     @controller.max_parking_time= @pMaxSpinBox.value
     @controller.safe_gap= @pSafeSpinBox.value
     @controller.refresh_model
+  end
+
+  def startStop()
+    @controller.startStop()
   end
 
   def initialize()

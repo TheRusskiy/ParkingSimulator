@@ -108,7 +108,7 @@ class Core
     @parking_exit.speed=entrance_exit_speed
     @lot.speed = lot_speed
 
-    @tick_thread.set_frequency(1)
+    @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw
@@ -176,4 +176,13 @@ class Core
       road.safe_gap=gap
     end
   end
+
+  def startStop()
+    if @tick_thread.working
+      @tick_thread.stop
+    else
+      @tick_thread.start
+    end
+  end
+
 end

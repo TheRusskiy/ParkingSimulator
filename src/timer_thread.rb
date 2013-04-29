@@ -25,17 +25,18 @@ class TimerThread
     end
     @working=true
     #@timer_id = @timer.startTimer(@delay)
-    set_frequency(1000/@delay)
+    set_frequency(1000.0/@delay)
   end
 
   def timerEvent(event)
+    return unless @working
     @job.call
     @milli_acc = @milli_acc + (Time.now - @last_time)*1000
     if @milli_acc > $REDRAW_RATE
        @milli_acc = 0
        @draw.call
     end
-    puts (Time.now-@last_time).to_s
+    #puts (Time.now-@last_time).to_s
     @last_time = Time.now
     Thread.pass
   end
