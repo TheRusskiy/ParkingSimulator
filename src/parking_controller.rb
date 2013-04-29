@@ -22,6 +22,9 @@ class ParkingController
     @view = window
     @view.controller=self
     @cashier=@core.cashier
+    @view.applyPrices
+    @view.applyControls
+    @view.setRandomProperties()
   #  TODO fetch default values from view
   end
   def refresh_model

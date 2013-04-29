@@ -18,6 +18,15 @@ class Car
     @stopped = false
     @required_spots=1
     @width=2
+    if rand(2)==0;
+      @model='domestic'
+    else
+      @model='imported'
+    end
+  end
+
+  def getModel
+    @model
   end
 
   def move_to(placement, starting_coordinate=nil)
@@ -54,6 +63,9 @@ class Car
   def turn
     turns = @cashier ? @cashier.time_scale : 1
     @turns_to_wait=@turns_to_wait - turns
+    if @cashier
+      @cashier.bill(self, turns)
+    end
   end
 
   def stopped?
@@ -78,6 +90,7 @@ class Truck < Car
     @assigned_spot_2=nil
     @required_spots=2
     @width=3
+    @model='truck'
   end
 
   def assigned_spot_2

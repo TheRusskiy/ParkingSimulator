@@ -276,7 +276,7 @@ class Window < Qt::MainWindow
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new('Uniform distribution controls')
     #T:
-    @uniform_t=[1, 600, 20]
+    @uniform_t=[1, 600, 5]
     uniformTLabel = Qt::Label.new(tr("T %d..%d:" % [@uniform_t[0], @uniform_t[1]]))
     @uniformTSpinBox = Qt::SpinBox.new do |i|
       i.range = @uniform_t[0]..@uniform_t[1]
@@ -441,20 +441,20 @@ class Window < Qt::MainWindow
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new('Statistics')
     @ticks=1000
-    ticksLabel = Qt::Label.new("Ticks past:"+@ticks.to_s)
+    @ticksLabel = Qt::Label.new("Ticks past:"+@ticks.to_s)
     @total_time=1000
-    totalTimeLabel = Qt::Label.new("Total simulation time: %d hours"%[@total_time])
+    @totalTimeLabel = Qt::Label.new("Total simulation time: %d hours"%[@total_time])
     @total_cars=1000
-    totalCarsLabel = Qt::Label.new("Total cars spawned: %d"%[@total_cars])
+    @totalCarsLabel = Qt::Label.new("Total cars spawned: %d"%[@total_cars])
     @money_earned=1000
-    totalMoneyLabel = Qt::Label.new("Money earned: %d $"%[@money_earned])
+    @totalMoneyLabel = Qt::Label.new("Money earned: %d $"%[@money_earned])
     @money_per_hour=@money_earned/@total_time
-    hourMoneyLabel = Qt::Label.new("Money earned: %d $ / hour"%[@money_per_hour])
-    layout.addWidget(ticksLabel, 0, 0)
-    layout.addWidget(totalTimeLabel, 1, 0)
-    layout.addWidget(totalCarsLabel, 2, 0)
-    layout.addWidget(totalMoneyLabel, 3, 0)
-    layout.addWidget(hourMoneyLabel, 4, 0)
+    @hourMoneyLabel = Qt::Label.new("Money earned: %d $ / hour"%[@money_per_hour])
+    layout.addWidget(@ticksLabel, 0, 0)
+    #layout.addWidget(@totalTimeLabel, 1, 0)
+    layout.addWidget(@totalCarsLabel, 2, 0)
+    layout.addWidget(@totalMoneyLabel, 3, 0)
+    layout.addWidget(@hourMoneyLabel, 4, 0)
     box.layout=layout
     return box
   end
@@ -560,9 +560,17 @@ class Window < Qt::MainWindow
   def display_information(cashier)
     time=cashier.time
     @clocker.job.call(time)
-    #s=@clock
-    #k=@clock.time
-    #s.setTime(cashier.time)
+
+
+    @ticksLabel.setText("Ticks past:"+cashier.ticks.to_s)
+    #@total_time=1000
+    #@totalTimeLabel = Qt::Label.new("Total simulation time: %d hours"%[@total_time])
+    #@total_cars=1000
+    @totalCarsLabel.setText("Total cars spawned: "+cashier.car_counter.to_s)
+    #@money_earned=1000
+    @totalMoneyLabel.setText("Money earned: %d $"%[cashier.money])
+    @money_per_hour=cashier.money/Float(cashier.ticks/cashier.time_scale)
+    @hourMoneyLabel.setText("Money pet hour: %f $"%[@money_per_hour])
   end
 
 end

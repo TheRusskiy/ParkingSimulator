@@ -109,6 +109,7 @@ class Core
     if car and @road.free_space?(car.length+@road.safe_gap)
       @cars<<car
       car.cashier=@cashier
+      @cashier.car_inc
       car.wants_to_park(generateParkingTime())
       car.move_to(@road)
       @presenter.add(car)

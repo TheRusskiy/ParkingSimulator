@@ -11,7 +11,7 @@ class GraphicCar < Qt::GraphicsItem
     @brush = Qt::Brush.new(@color)
     setAcceptHoverEvents(true)
     @text = Qt::GraphicsTextItem.new("", self)
-    showText
+    hideText
     setZValue(5)
   end
 
@@ -28,11 +28,11 @@ class GraphicCar < Qt::GraphicsItem
   end
 
   def paint(painter, arg, widget)
-    if @car.wants_to_park_time>0
-      showText
-    else
-      hideText
-    end
+    #if @car.wants_to_park_time>0
+    #  showText
+    #else
+    #  hideText
+    #end
     @polygon||=get_car_polygon
     if @draw_text;
       adjust_text_setting
