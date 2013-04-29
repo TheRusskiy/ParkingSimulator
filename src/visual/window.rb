@@ -563,14 +563,34 @@ class Window < Qt::MainWindow
 
 
     @ticksLabel.setText("Ticks past:"+cashier.ticks.to_s)
-    #@total_time=1000
-    #@totalTimeLabel = Qt::Label.new("Total simulation time: %d hours"%[@total_time])
-    #@total_cars=1000
+    #@totalTimeLabel.setText("Total simulation time: %d hours"%[(cashier.ticks/cashier.time_scale)])
     @totalCarsLabel.setText("Total cars spawned: "+cashier.car_counter.to_s)
-    #@money_earned=1000
     @totalMoneyLabel.setText("Money earned: %d $"%[cashier.money])
     @money_per_hour=cashier.money/Float(cashier.ticks/cashier.time_scale)
     @hourMoneyLabel.setText("Money pet hour: %f $"%[@money_per_hour])
+
+    if @sdadsa.nil?
+      @sdadsa=1
+      createTableRows cashier.spots.length
+    end
+    curr=0
+    cashier.spots.each do |spot|
+      setTableData(curr, 0, spot.occupied?.to_s)
+      if spot.assigned_car
+        setTableData(curr, 1, spot.assigned_car.wants_to_park_time.to_s)
+        setTableData(curr, 2, spot.assigned_car.getModel)
+      else
+        setTableData(curr, 1, "")
+        setTableData(curr, 2, "")
+      end
+
+
+
+
+
+      curr=curr+1
+    end
+
   end
 
 end

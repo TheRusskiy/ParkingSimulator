@@ -8,6 +8,17 @@ class ParkingLot
     road.parking_lot = self
   end
 
+  def get_all_spots
+    spots = Array.new
+    @segments.each do |s|
+      spots_segm=s.spots
+      spots_segm.each do |s2|
+        spots << s2
+      end
+    end
+    return spots
+  end
+
   def add_road_segment(parking_road)
     @segments << parking_road
     parking_road.set_parking_lot self

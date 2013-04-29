@@ -87,6 +87,8 @@ class Core
     @parking_exit.speed=entrance_exit_speed
     @lot.speed = lot_speed
 
+    @cashier.spots=@lot.get_all_spots
+
     @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
@@ -103,8 +105,8 @@ class Core
     end
     if @meaningful_tick;
       car = @generator.next_car
+      @controller.force_draw
     end
-    @controller.force_draw
     @cashier.turn #<<controller already passed appropriately scaled time
     if car and @road.free_space?(car.length+@road.safe_gap)
       @cars<<car

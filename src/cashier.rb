@@ -1,7 +1,7 @@
 require '../src/core'
 
 class Cashier
-  attr_accessor :time_scale, :domestic_price, :imported_price
+  attr_accessor :time_scale, :domestic_price, :imported_price, :spots
   attr_accessor :truck_price, :night_price, :time, :money, :ticks, :car_counter
   def initialize
     @time_scale=1
