@@ -6,10 +6,13 @@ require '../src/visual/presenter'
 require '../src/road/parking_road'
 require '../src/road/parking_lot'
 require '../src/road/parking_spot'
+require '../src/cashier'
 class Core
+  attr_accessor :controller, :cashier
   def initialize(view)
     @cars = Array.new
     @view=view
+    @cashier = Cashier.new
 
 
     ##_________________________
@@ -89,6 +92,13 @@ class Core
     @presenter.add(@road3)
     @presenter.add(@entrance)
     @presenter.add(@parking_exit)
+    @roads = Array.new
+    @roads<<@road
+    @roads<<@road1
+    @roads<<@road2
+    @roads<<@road3
+    @roads<<@entrance
+    @roads<<@parking_exit
 
     usual_speed=1
     lot_speed=0.5
@@ -98,7 +108,7 @@ class Core
     @parking_exit.speed=entrance_exit_speed
     @lot.speed = lot_speed
 
-    @tick_thread.set_frequency(30)
+    @tick_thread.set_frequency(1)
     @tick_thread.job = (lambda{tick})
     @tick_thread.draw = (lambda{@presenter.redraw})
     @presenter.redraw
@@ -108,7 +118,8 @@ class Core
     car = @generator.next_car
     if car and @road.free_space?(car.length+@road.safe_gap)
       @cars<<car
-      if rand(2)==0; car.wants_to_park 60 end
+      car.cashier=@cashier
+      car.wants_to_park(generateParkingTime())
       car.move_to(@road)
       @presenter.add(car)
       @generator.spawned_car=nil
@@ -124,5 +135,45 @@ class Core
 
   def start()
     @tick_thread.start
+  end
+
+  def generateParkingTime()
+    @min_time||=60
+    @max_time||=120
+    if rand(4)!=0; return 0 end
+    @random_time||=Random.new
+    @random_time.rand(@max_time-@min_time)+@min_time
+  end
+
+  def set_frequency(frequency)
+    @tick_thread.set_frequency(frequency)
+  end
+
+  def set_car_road_speed(speed)
+    @road.speed=speed
+    @entrance.speed=speed
+    @parking_exit.speed=speed
+  end
+
+  def set_parking_speed(speed)
+    @lot.speed=speed
+  end
+
+  def set_parking_time_scale(scale)
+    @cashier.time_scale=scale
+  end
+
+  def set_min_parking_time(time)
+    @min_time=time
+  end
+
+  def set_max_parking_time(time)
+    @max_time=time
+  end
+
+  def set_safe_gap(gap)
+    @roads.each do |road|
+      road.safe_gap=gap
+    end
   end
 end

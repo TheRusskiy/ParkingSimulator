@@ -3,8 +3,21 @@ require_relative 'parkingview'
 	
 class Window < Qt::MainWindow
   attr_reader :view
+  attr_accessor :controller
 
-  #slots 'pointClicked()'
+  slots 'applyControls()'
+
+  def applyControls()
+    @controller.simulation_speed= @simSpeedSpinBox.value
+    @controller.car_road_speed= @carSpeedSpinBox.value
+    @controller.car_parking_speed= @carPSpeedSpinBox.value
+    @controller.discretization= @discretSpinBox.value
+    @controller.parking_time_scale= @pScaleSpinBox.value
+    @controller.min_parking_time= @pMinSpinBox.value
+    @controller.max_parking_time= @pMaxSpinBox.value
+    @controller.safe_gap= @pSafeSpinBox.value
+    @controller.refresh_model
+  end
 
   def initialize()
 		super
@@ -69,7 +82,7 @@ class Window < Qt::MainWindow
     #Simulation speed:
     @sim_speed=[1, 20, 6]
     simSpeedLabel = Qt::Label.new(tr("Simulation speed %d..%d:" % [@sim_speed[0], @sim_speed[1]]))
-    simSpeedSpinBox = Qt::SpinBox.new do |i|
+    @simSpeedSpinBox = Qt::SpinBox.new do |i|
       i.range = @sim_speed[0]..@sim_speed[1]
       i.singleStep = 1
       i.value = @sim_speed[2]
@@ -78,7 +91,7 @@ class Window < Qt::MainWindow
     #Road speed:
     @car_speed=[1, 20, 10]
     carSpeedLabel = Qt::Label.new(tr("Car road speed %d..%d:" % [@car_speed[0], @car_speed[1]]))
-    carSpeedSpinBox = Qt::SpinBox.new do |i|
+    @carSpeedSpinBox = Qt::SpinBox.new do |i|
       i.range = @car_speed[0]..@car_speed[1]
       i.singleStep = 1
       i.value = @car_speed[2]
@@ -87,7 +100,7 @@ class Window < Qt::MainWindow
     #Parking road speed:
     @car_pspeed=[1, 20, 5]
     carPSpeedLabel = Qt::Label.new(tr("Car parking speed %d..%d:" % [@car_pspeed[0], @car_pspeed[1]]))
-    carPSpeedSpinBox = Qt::SpinBox.new do |i|
+    @carPSpeedSpinBox = Qt::SpinBox.new do |i|
       i.range = @car_pspeed[0]..@car_pspeed[1]
       i.singleStep = 1
       i.value = @car_pspeed[2]
@@ -96,7 +109,7 @@ class Window < Qt::MainWindow
     #Discretization:
     @diskret=[1, 10, 5]
     diskretLabel = Qt::Label.new(tr("Discretization %d..%d:" % [@diskret[0], @diskret[1]]))
-    diskretSpinBox = Qt::SpinBox.new do |i|
+    @discretSpinBox = Qt::SpinBox.new do |i|
       i.range = @diskret[0]..@diskret[1]
       i.singleStep = 1
       i.value = @diskret[2]
@@ -105,7 +118,7 @@ class Window < Qt::MainWindow
     #Parking time scale:
     @pscale=[60, 3600, 600]
     pScaleLabel = Qt::Label.new(tr("Time scale %d..%d:" % [@pscale[0], @pscale[1]]))
-    pScaleSpinBox = Qt::SpinBox.new do |i|
+    @pScaleSpinBox = Qt::SpinBox.new do |i|
       i.range = @pscale[0]..@pscale[1]
       i.singleStep = 60
       i.value = @pscale[2]
@@ -115,7 +128,7 @@ class Window < Qt::MainWindow
     #Minimal parking time:
     @min_park=[1, 1440, 60]
     pMinLabel = Qt::Label.new(tr("Minimal parking time %d..%d:" % [@min_park[0], @min_park[1]]))
-    pMinSpinBox = Qt::SpinBox.new do |i|
+    @pMinSpinBox = Qt::SpinBox.new do |i|
       i.range = @min_park[0]..@min_park[1]
       i.singleStep = 1
       i.value = @min_park[2]
@@ -124,7 +137,7 @@ class Window < Qt::MainWindow
     #Maximal parking time:
     @max_park=[0, 1440, 240]
     pMaxLabel = Qt::Label.new(tr("Maximal parking time %d..%d:" % [@max_park[0], @max_park[1]]))
-    pMaxSpinBox = Qt::SpinBox.new do |i|
+    @pMaxSpinBox = Qt::SpinBox.new do |i|
       i.range = @max_park[0]..@max_park[1]
       i.singleStep = 60
       i.value = @max_park[2]
@@ -134,7 +147,7 @@ class Window < Qt::MainWindow
     #Safe gap:
     @p_safe=[1, 5, 1]
     pSafeLabel = Qt::Label.new(tr("Gap between cars %d..%d:" % [@p_safe[0], @p_safe[1]]))
-    pSafeSpinBox = Qt::SpinBox.new do |i|
+    @pSafeSpinBox = Qt::SpinBox.new do |i|
       i.range = @p_safe[0]..@p_safe[1]
       i.singleStep = 1
       i.value = @p_safe[2]
@@ -143,21 +156,21 @@ class Window < Qt::MainWindow
     @applyControlsButton = createButton("Apply", SLOT('applyControls()'))
     @startStopControlsButton = createButton("Start/Stop", SLOT('startStop()'), "Start/Stop simulation")
     layout.addWidget(simSpeedLabel, 0, 0)
-    layout.addWidget(simSpeedSpinBox, 1, 0)
+    layout.addWidget(@simSpeedSpinBox, 1, 0)
     layout.addWidget(carSpeedLabel, 2, 0)
-    layout.addWidget(carSpeedSpinBox, 3, 0)
+    layout.addWidget(@carSpeedSpinBox, 3, 0)
     layout.addWidget(carPSpeedLabel, 4, 0)
-    layout.addWidget(carPSpeedSpinBox, 5, 0)
+    layout.addWidget(@carPSpeedSpinBox, 5, 0)
     layout.addWidget(diskretLabel, 6, 0)
-    layout.addWidget(diskretSpinBox, 7, 0)
+    layout.addWidget(@discretSpinBox, 7, 0)
     layout.addWidget(pScaleLabel, 0, 1)
-    layout.addWidget(pScaleSpinBox, 1, 1)
+    layout.addWidget(@pScaleSpinBox, 1, 1)
     layout.addWidget(pMinLabel, 2, 1)
-    layout.addWidget(pMinSpinBox, 3, 1)
+    layout.addWidget(@pMinSpinBox, 3, 1)
     layout.addWidget(pMaxLabel, 4, 1)
-    layout.addWidget(pMaxSpinBox, 5, 1)
+    layout.addWidget(@pMaxSpinBox, 5, 1)
     layout.addWidget(pSafeLabel, 6, 1)
-    layout.addWidget(pSafeSpinBox, 7, 1)
+    layout.addWidget(@pSafeSpinBox, 7, 1)
     layout.addWidget(@applyControlsButton, 8, 0)
     layout.addWidget(@startStopControlsButton, 8, 1)
     box.layout=layout
@@ -277,7 +290,7 @@ class Window < Qt::MainWindow
     end
     #Imported car:
     @import_price=[1, 100, 10]
-    importLabel = Qt::Label.new(tr("Import car price %d..%d:" % [@import_price[0], @import_price[1]]))
+    importLabel = Qt::Label.new(tr("Imported car price %d..%d:" % [@import_price[0], @import_price[1]]))
     importSpinBox = Qt::DoubleSpinBox.new do |i|
       i.range = @import_price[0]..@import_price[1]
       i.singleStep = 1

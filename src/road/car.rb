@@ -48,7 +48,8 @@ class Car
   end
 
   def turn
-    @turns_to_wait=@turns_to_wait - 1
+    turns = @cashier ? @cashier.time_scale : 1
+    @turns_to_wait=@turns_to_wait - turns
   end
 
   def stopped?

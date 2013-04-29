@@ -5,9 +5,9 @@ class Road
   require_relative '../exceptions/car_added_twice_exception'
   require 'awesome_print'
   include Math
-  attr_reader :length, :cars, :angle, :safe_gap
+  attr_reader :length, :cars, :angle
   attr_accessor :parking_lot
-  attr_accessor :speed
+  attr_accessor :speed, :safe_gap
 
   def initialize(c1=Coordinate.new(100, 100), c2=Coordinate.new(0, 100))
     @cars = Array.new
@@ -70,10 +70,23 @@ class Road
 
   def move_car_by(car, by_space)
     move_car(by_space, car)
-    if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0) and @parking_entrance.parking_lot.has_free_spots?(car.required_spots)
+    #if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0) and @parking_entrance.parking_lot.has_free_spots?(car.required_spots)
+    if shall_park? car, by_space
       move_car_to(car, @parking_entrance)
     elsif DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])>=@length
       move_car_to(car, @extension, @coordinate_to_connect)
+    end
+  end
+
+  def shall_park?(car, by_space)
+    unless car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0)
+      return false
+    end
+    if @parking_entrance and @parking_entrance.parking_lot.has_free_spots?(car.required_spots)
+      return true
+    else
+      car.wants_to_park 0
+      return false
     end
   end
 

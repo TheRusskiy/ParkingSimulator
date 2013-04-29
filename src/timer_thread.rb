@@ -24,7 +24,8 @@ class TimerThread
       raise AlreadyInProgress
     end
     @working=true
-    @timer.startTimer(@delay)
+    #@timer_id = @timer.startTimer(@delay)
+    set_frequency(1000/@delay)
   end
 
   def timerEvent(event)
@@ -34,6 +35,7 @@ class TimerThread
        @milli_acc = 0
        @draw.call
     end
+    puts (Time.now-@last_time).to_s
     @last_time = Time.now
     Thread.pass
   end
@@ -44,6 +46,11 @@ class TimerThread
 
   def set_frequency(frequency)
     @delay=1000.0/frequency
+    if @timer_id;
+      @timer.killTimer(@timer_id)
+    end;
+    @timer=QTimer.new(self)
+    @timer_id=@timer.startTimer(@delay)
   end
 
 end

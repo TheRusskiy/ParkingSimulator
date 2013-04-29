@@ -2,12 +2,12 @@ require 'Qt'
 require 'awesome_print'
 require_relative '../src/visual/window'
 require_relative '../src/core'
-require_relative '../src/binder'
+require_relative '../src/parking_controller'
 
 app = Qt::Application.new(ARGV)
-window = Window.new
+window = Window.new()
 core = Core.new(window.view)
-binder = Binder.new(core, window)
+controller = ParkingController.new(core, window)
 window.show
 core.start
 app.exec
