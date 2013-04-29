@@ -10,22 +10,6 @@ class ParkingView < Qt::GraphicsView
     @scene =  scene
     @scene.setSceneRect(0, 0, X, Y)
     @scene.itemIndexMethod = Qt::GraphicsScene::NoIndex
-
-
-    #car_count = 7;
-    #for i in 0...car_count do
-    #  car = GraphicCar.new
-    #  car.setPos(i*100, 100)
-    #  @scene.addItem(car)
-    #end
-    a1=@scene.addText('(0, 0)')
-    a1.setPos(0, 0)
-    a2=@scene.addText('(100, 0)')
-    a2.setPos(100, 0)
-    a3=@scene.addText('(0, 100)')
-    a3.setPos(0, 100)
-    a4=@scene.addText('(100, 100)')
-    a4.setPos(100, 100)
     #super.resetCachedContent
     super(@scene)
 

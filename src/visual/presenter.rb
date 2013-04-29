@@ -49,6 +49,14 @@ class Presenter
     end
   end
 
+  def clear
+    @objects.each do |obj|
+      @scene.removeItem(obj.draw_item)
+    end
+    @objects.clear
+    @objects=Array.new
+  end
+
   def add(object)
     @objects << object
     case object.class.name

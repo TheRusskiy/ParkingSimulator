@@ -23,6 +23,13 @@ class Road
     @speed=1
   end
 
+  def clear
+    @cars.each do |car|
+      car.placement=nil
+    end
+    @cars.clear
+  end
+
   def get_state(car)
     state= car.state
     #beetween_car_and_end = DistanceCalculator.distance_between(car.coordinate, @coordinates[:end])

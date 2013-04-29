@@ -15,7 +15,7 @@ class ParkingController
   attr_accessor :domestic
   attr_accessor :imported
   attr_accessor :truck
-  attr_accessor :night
+  attr_accessor :night, :core
   def initialize(core, window)
     @core = core
     @core.controller=self

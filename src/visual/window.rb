@@ -27,12 +27,25 @@ class DigitalClock < Qt::LCDNumber
     showTime
   end
 
+  def night?
+    @time.hour<8 || @time.hour>22
+  end
+
   def showTime()
     hour = @time.hour.to_s
     hour = hour.length==1 ? '0'+hour : hour
     minutes = @time.min.to_s
     minutes = minutes.length==1 ? '0'+minutes : minutes
     display(hour+":"+minutes)
+    #
+    #
+    #if night?
+    #  @color = Qt::Color.new(rand(0), rand(0), rand(0))
+    #else
+    #  @color = Qt::Color.new(rand(255), rand(255), rand(255))
+    #end
+    #@brush = Qt::Brush.new(@color)
+    #self.window.view.setBackground(@brush)
   end
 end
 
@@ -41,10 +54,22 @@ class Window < Qt::MainWindow
   attr_accessor :controller
 
   slots 'applyControls()', 'startStop()', 'selectUniform()', 'selectExponential()', 'selectNormal()',
-        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()'
+        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()', 'selectStructure2()'
 
   def closeProgram()
     exit
+  end
+
+  def selectStructure1()
+    @controller.core.createCoordinates
+    @controller.core.createRoads
+    invalidate_table_cache
+  end
+
+  def selectStructure2()
+    @controller.core.createCoordinates_2
+    @controller.core.createRoads
+    invalidate_table_cache
   end
 
   def applyControls()
@@ -122,7 +147,7 @@ class Window < Qt::MainWindow
     createStatusBar
 	  setWindowTitle('Parking lot simulator')
     adjustWindowSize(@w)
-    resize(@w.width+450, @w.height+0)
+    resize(@w.width+510, @w.height+0)
     setFixedSize(self.size());
 	end
 
@@ -569,28 +594,26 @@ class Window < Qt::MainWindow
     @money_per_hour=cashier.money/Float(cashier.ticks/cashier.time_scale)
     @hourMoneyLabel.setText("Money pet hour: %f $"%[@money_per_hour])
 
-    if @sdadsa.nil?
-      @sdadsa=1
+    if @cache.nil?
+      @cache=1
       createTableRows cashier.spots.length
     end
     curr=0
     cashier.spots.each do |spot|
       setTableData(curr, 0, spot.occupied?.to_s)
       if spot.assigned_car
-        setTableData(curr, 1, spot.assigned_car.wants_to_park_time.to_s)
+        setTableData(curr, 1, (spot.assigned_car.wants_to_park_time/60).round.to_s+'m')
         setTableData(curr, 2, spot.assigned_car.getModel)
       else
         setTableData(curr, 1, "")
         setTableData(curr, 2, "")
       end
-
-
-
-
-
       curr=curr+1
     end
+  end
 
+  def invalidate_table_cache
+    @cache=nil
   end
 
 end

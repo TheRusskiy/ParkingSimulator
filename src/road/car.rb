@@ -45,7 +45,7 @@ class Car
   end
 
   def move()
-    move_by(@placement.speed)
+    if @placement; move_by(@placement.speed) end
   end
 
   def wants_to_park?
