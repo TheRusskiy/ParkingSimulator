@@ -6,7 +6,7 @@ class Window < Qt::MainWindow
   attr_accessor :controller
 
   slots 'applyControls()', 'startStop()', 'selectUniform()', 'selectExponential()', 'selectNormal()',
-        'selectDetermined()', 'applyUniform()', 'applyNormal()', 'applyExponential()', 'applyDetermined()', 'closeProgram()'
+        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()'
 
   def closeProgram()
     exit
@@ -38,7 +38,7 @@ class Window < Qt::MainWindow
   end
 
   def selectUniform()
-    @controller.selectUniform
+    @controller.select_generator("uniform")
     @uni.setVisible(true)
     @norm.setVisible(false)
     @exp.setVisible(false)
@@ -46,7 +46,7 @@ class Window < Qt::MainWindow
   end
 
   def selectExponential()
-    @controller.selectExponential
+    @controller.select_generator("exponential")
     @uni.setVisible(false)
     @norm.setVisible(false)
     @exp.setVisible(true)
@@ -54,7 +54,7 @@ class Window < Qt::MainWindow
   end
 
   def selectNormal()
-    @controller.selectNormal
+    @controller.select_generator("normal")
     @uni.setVisible(false)
     @norm.setVisible(true)
     @exp.setVisible(false)
@@ -62,27 +62,11 @@ class Window < Qt::MainWindow
   end
 
   def selectDetermined()
-    @controller.selectDetermined()
+    @controller.select_generator("determined")
     @uni.setVisible(false)
     @norm.setVisible(false)
     @exp.setVisible(false)
     @det.setVisible(true)
-  end
-
-  def applyUniform()
-    setRandomProperties()
-  end
-
-  def applyNormal()
-    setRandomProperties()
-  end
-
-  def applyExponential()
-    setRandomProperties()
-  end
-
-  def applyDetermined()
-    setRandomProperties()
   end
 
   def initialize()
@@ -140,6 +124,14 @@ class Window < Qt::MainWindow
 
     box.layout=layout
     return box
+  end
+
+  def applyPrices()
+    @controller.domestic= @domesticSpinBox.value
+    @controller.imported= @importSpinBox.value
+    @controller.truck= @truckSpinBox.value
+    @controller.night= @nightSpinBox.value
+    @controller.refresh_prices
   end
 
   def createTimeControls()
@@ -258,7 +250,7 @@ class Window < Qt::MainWindow
       i.prefix = '0..'
       i.suffix = ' seconds'
     end
-    @applyUniformButton = createButton("Apply", SLOT('applyUniform()'))
+    @applyUniformButton = createButton("Apply", SLOT('setRandomProperties()'))
     layout.addWidget(uniformTLabel, 0, 0)
     layout.addWidget(@uniformTSpinBox, 1, 0)
     layout.addWidget(@applyUniformButton, 2, 0)
@@ -289,7 +281,7 @@ class Window < Qt::MainWindow
       i.value = @normal_variance[2]
       i.suffix = ' %'
     end
-    @applyNormalButton = createButton("Apply", SLOT('applyNormal()'))
+    @applyNormalButton = createButton("Apply", SLOT('setRandomProperties()'))
     layout.addWidget(normalMeanLabel, 0, 0)
     layout.addWidget(@normalMeanSpinBox, 1, 0)
     layout.addWidget(varianceLabel, 2, 0)
@@ -313,7 +305,7 @@ class Window < Qt::MainWindow
       i.value = @rate[2]
       i.prefix = ''
     end
-    @applyExponentialButton = createButton("Apply", SLOT('applyExponential()'))
+    @applyExponentialButton = createButton("Apply", SLOT('setRandomProperties()'))
     layout.addWidget(rateLabel, 0, 0)
     layout.addWidget(@rateSpinBox, 1, 0)
     layout.addWidget(@applyExponentialButton, 2, 0)
@@ -335,7 +327,7 @@ class Window < Qt::MainWindow
       i.prefix = 'every '
       i.suffix = ' seconds'
     end
-    @applyDeterminedButton = createButton("Apply", SLOT('applyDetermined()'))
+    @applyDeterminedButton = createButton("Apply", SLOT('setRandomProperties()'))
     layout.addWidget(determinedLabel, 0, 0)
     layout.addWidget(@determinedSpinBox, 1, 0)
     layout.addWidget(@applyDeterminedButton, 2, 0)
@@ -350,7 +342,7 @@ class Window < Qt::MainWindow
     #Domestic car:
     @domestic_price=[1, 100, 5]
     domesticLabel = Qt::Label.new(tr("Domestic car price %d..%d:" % [@domestic_price[0], @domestic_price[1]]))
-    domesticSpinBox = Qt::DoubleSpinBox.new do |i|
+    @domesticSpinBox = Qt::DoubleSpinBox.new do |i|
       i.range = @domestic_price[0]..@domestic_price[1]
       i.singleStep = 1
       i.value = @domestic_price[2]
@@ -359,7 +351,7 @@ class Window < Qt::MainWindow
     #Imported car:
     @import_price=[1, 100, 10]
     importLabel = Qt::Label.new(tr("Imported car price %d..%d:" % [@import_price[0], @import_price[1]]))
-    importSpinBox = Qt::DoubleSpinBox.new do |i|
+    @importSpinBox = Qt::DoubleSpinBox.new do |i|
       i.range = @import_price[0]..@import_price[1]
       i.singleStep = 1
       i.value = @import_price[2]
@@ -368,7 +360,7 @@ class Window < Qt::MainWindow
     #Truck price:
     @truck_price=[1, 100, 10]
     truckLabel = Qt::Label.new(tr("Truck price %d..%d:" % [@truck_price[0], @truck_price[1]]))
-    truckSpinBox = Qt::DoubleSpinBox.new do |i|
+    @truckSpinBox = Qt::DoubleSpinBox.new do |i|
       i.range = @truck_price[0]..@truck_price[1]
       i.singleStep = 1
       i.value = @truck_price[2]
@@ -377,7 +369,7 @@ class Window < Qt::MainWindow
     #Night discount:
     @night_price=[1, 100, 60]
     nightLabel = Qt::Label.new(tr("Night discount %d..%d:" % [@night_price[0], @night_price[1]]))
-    nightSpinBox = Qt::SpinBox.new do |i|
+    @nightSpinBox = Qt::SpinBox.new do |i|
       i.range = @night_price[0]..@night_price[1]
       i.singleStep = 1
       i.value = @night_price[2]
@@ -385,13 +377,13 @@ class Window < Qt::MainWindow
     end
     @applyPricesButton = createButton("Apply", SLOT('applyPrices()'))
     layout.addWidget(domesticLabel, 0, 0)
-    layout.addWidget(domesticSpinBox, 1, 0)
+    layout.addWidget(@domesticSpinBox, 1, 0)
     layout.addWidget(importLabel, 2, 0)
-    layout.addWidget(importSpinBox, 3, 0)
+    layout.addWidget(@importSpinBox, 3, 0)
     layout.addWidget(truckLabel, 4, 0)
-    layout.addWidget(truckSpinBox, 5, 0)
+    layout.addWidget(@truckSpinBox, 5, 0)
     layout.addWidget(nightLabel, 6, 0)
-    layout.addWidget(nightSpinBox, 7, 0)
+    layout.addWidget(@nightSpinBox, 7, 0)
     layout.addWidget(@applyPricesButton, 8, 0)
     layout.setRowStretch(9, 1)
     box.layout=layout
@@ -538,7 +530,6 @@ class DigitalClock < Qt::LCDNumber
   def initialize(parent = nil)
     super(parent)
     @time = Time.now
-
     setSegmentStyle(Filled)
     showTime()
     resize(150, 150)
@@ -546,6 +537,11 @@ class DigitalClock < Qt::LCDNumber
 
   def forward(seconds)
     @time = @time + seconds
+    showTime
+  end
+
+  def setTime(time)
+    @time = time
     showTime
   end
 

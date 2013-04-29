@@ -12,6 +12,10 @@ class ParkingController
   attr_accessor :normal_mean
   attr_accessor :exponential_rate
   attr_accessor :determined_interval
+  attr_accessor :domestic
+  attr_accessor :imported
+  attr_accessor :truck
+  attr_accessor :night
   alias :dis :discretization
   def initialize(core, window)
     @core = core
@@ -32,10 +36,17 @@ class ParkingController
     @core.slow_simulation_by @discretization
   end
 
+  def refresh_prices
+    @cashier=@core.cashier
+    @cashier.domestic_price=@domestic
+    @cashier.imported_price=@imported
+    @cashier.truck_price=@truck
+    @cashier.night_price=@night
+  end
+
   def refresh_random_params
     @core.uniform_t= @uniform_t
-    @core.normal_mean= @normal_mean
-    @core.normal_variance= @normal_variance
+    @core.normal_mean_and_variance= @normal_mean, @normal_variance
     @core.exponential_rate = @exponential_rate
     @core.determined_interval = @determined_interval
   end
@@ -44,19 +55,8 @@ class ParkingController
     @core.startStop()
   end
 
-  def selectUniform()
-    @core.selectUniform
+  def select_generator(name)
+    @core.select_generator(name)
   end
 
-  def selectExponential()
-    @core.selectExponential
-  end
-
-  def selectNormal()
-    @core.selectNormal
-  end
-
-  def selectDetermined()
-    @core.selectDetermined()
-  end
 end
