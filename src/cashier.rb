@@ -8,15 +8,19 @@ class Cashier
     Car.class_eval do
       attr_accessor :cashier
     end
+    @time_past_seconds=0
     @time = Time.now
     @ticks=0
     @money=0
     @car_counter=0
   end
 
-
   def night?
     @time.hour<8 || @time.hour>22
+  end
+
+  def time_past
+    @time-@time_past_seconds
   end
 
   def turn

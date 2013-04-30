@@ -9,5 +9,5 @@ window = Window.new()
 core = Core.new(window.view)
 controller = ParkingController.new(core, window)
 window.show
-core.start
+#core.start
 app.exec

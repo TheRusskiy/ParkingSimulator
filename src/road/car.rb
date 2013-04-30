@@ -63,6 +63,8 @@ class Car
   def turn
     turns = @cashier ? @cashier.time_scale : 1
     @turns_to_wait=@turns_to_wait - turns
+    turns = @turns_to_wait < 0 ? 0 : turns
+    @turns_to_wait = @turns_to_wait < 0 ? 0 : @turns_to_wait
     if @cashier
       @cashier.bill(self, turns)
     end

@@ -61,7 +61,9 @@ class GraphicCar < Qt::GraphicsItem
     @text.setScale(2.0/scale)
     @text.setDefaultTextColor(@color)
     #Integer(pos.x/scale).to_s+':'+Integer(pos.y/scale).to_s+
-    @text.setPlainText((@car.wants_to_park_time/60).round.to_s+'m')
+    @text.setPlainText(@car.getModel+', '+
+                           (@car.wants_to_park_time/60/60).round.to_s+'h'+
+                           ':'+(@car.wants_to_park_time/60%60).round.to_s+'m')
     @text.adjustSize
   end
 

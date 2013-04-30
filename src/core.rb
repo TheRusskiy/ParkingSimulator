@@ -27,14 +27,12 @@ class Core
     @normal = CarGenerator.normal(10, 2)
     @exponential = CarGenerator.exponential(10)
     @determined = CarGenerator.determined(10)
-    @generator = @exponential
+    @generator = @uniform
     @tick_thread = TimerThread.new
     @presenter = Presenter.new(view, 4)
 
     createCoordinates()
     createRoads()
-
-
 
     usual_speed=1
     lot_speed=0.5
@@ -43,8 +41,6 @@ class Core
     @entrance.speed=entrance_exit_speed
     @parking_exit.speed=entrance_exit_speed
     @lot.speed = lot_speed
-
-
 
     @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
@@ -128,6 +124,7 @@ class Core
     @presenter.add(@road3)
     @presenter.add(@entrance)
     @presenter.add(@parking_exit)
+    @presenter.add(@cashier)
     @roads = Array.new
     @roads<<@road
     @roads<<@road1
@@ -146,10 +143,9 @@ class Core
       @meaningful_tick=false
     end
     if @meaningful_tick;
+      @cashier.turn
       car = @generator.next_car
       @controller.force_draw
-    end
-    @cashier.turn #<<controller already passed appropriately scaled time
     if car and @road.free_space?(car.length+@road.safe_gap)
       @cars<<car
       car.cashier=@cashier
@@ -160,6 +156,7 @@ class Core
       @generator.spawned_car=nil
     else
       if car; @generator.spawned_car=car end #preserve trucks in high load
+    end
     end
     for each_car in @cars
       each_car.move

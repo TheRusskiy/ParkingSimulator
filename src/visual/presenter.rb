@@ -2,6 +2,7 @@ class Presenter
   require_relative 'GraphicCar'
   require_relative 'GraphicRoad'
   require_relative 'GraphicParkingSpot'
+  require_relative 'GraphicCashier'
   require_relative '../road/car'
   require_relative '../road/road'
   require_relative '../road/parking_road'
@@ -45,6 +46,9 @@ class Presenter
       attr_accessor :draw_item
     end
     ParkingSpot.class_eval do
+      attr_accessor :draw_item
+    end
+    Cashier.class_eval do
       attr_accessor :draw_item
     end
   end
@@ -99,6 +103,10 @@ class Presenter
         object.draw_item = GraphicParkingSpot.new(object.coordinate, object.is_left, object.angle, $SPOT_LENGTH)
         object.draw_item.setScale(@scale)
         @scene.addItem(object.draw_item)
+      when 'Cashier'
+        object.draw_item = GraphicCashier.new(@scene, object)
+        #object.draw_item.setScale(@scale)
+        @scene.addItem(object.draw_item)
     end
   end
 
@@ -117,6 +125,8 @@ class Presenter
           draw_road(object)
         when 'ParkingSpot'
           draw_spot(object)
+        when 'Cashier'
+          draw_cashier(object)
       end
     end
   end
@@ -145,6 +155,10 @@ class Presenter
 
   def draw_road(road)
     road.draw_item.setScale(@scale)
+  end
+
+  def draw_cashier(cashier)
+    #cashier.draw_item.setScale(@scale)
   end
 
   def contains?(object_to_find)

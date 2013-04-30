@@ -1,54 +1,6 @@
 require_relative 'borderlayout'
 require_relative 'parkingview'
 
-class TimeSetter
-  attr_accessor :job
-end
-
-class DigitalClock < Qt::LCDNumber
-  attr_accessor :time
-  # Constructs a DigitalClock widget
-  def initialize(parent, time_setter)
-    super(parent)
-    @time = Time.now
-    setSegmentStyle(Filled)
-    showTime()
-    resize(150, 150)
-    time_setter.job=(lambda{|t| setTime(t);})
-  end
-
-  #def forward(seconds)
-  #  @time = @time + seconds
-  #  showTime
-  #end
-
-  def setTime(time)
-    @time = time
-    showTime
-  end
-
-  def night?
-    @time.hour<8 || @time.hour>22
-  end
-
-  def showTime()
-    hour = @time.hour.to_s
-    hour = hour.length==1 ? '0'+hour : hour
-    minutes = @time.min.to_s
-    minutes = minutes.length==1 ? '0'+minutes : minutes
-    display(hour+":"+minutes)
-    #
-    #
-    #if night?
-    #  @color = Qt::Color.new(rand(0), rand(0), rand(0))
-    #else
-    #  @color = Qt::Color.new(rand(255), rand(255), rand(255))
-    #end
-    #@brush = Qt::Brush.new(@color)
-    #self.window.view.setBackground(@brush)
-  end
-end
-
 class Window < Qt::MainWindow
   attr_reader :view
   attr_accessor :controller
@@ -90,6 +42,7 @@ class Window < Qt::MainWindow
     @controller.normal_mean= @normalMeanSpinBox.value
     @controller.exponential_rate = @rateSpinBox.value
     @controller.determined_interval = @determinedSpinBox.value
+    @controller.select_generator(@selected_generator)
     @controller.refresh_random_params
   end
 
@@ -98,7 +51,8 @@ class Window < Qt::MainWindow
   end
 
   def selectUniform()
-    @controller.select_generator("uniform")
+    @selected_generator = "uniform"
+    @controller.select_generator(@selected_generator)
     @uni.setVisible(true)
     @norm.setVisible(false)
     @exp.setVisible(false)
@@ -106,7 +60,8 @@ class Window < Qt::MainWindow
   end
 
   def selectExponential()
-    @controller.select_generator("exponential")
+    @selected_generator = "exponential"
+    @controller.select_generator(@selected_generator)
     @uni.setVisible(false)
     @norm.setVisible(false)
     @exp.setVisible(true)
@@ -114,7 +69,8 @@ class Window < Qt::MainWindow
   end
 
   def selectNormal()
-    @controller.select_generator("normal")
+    @selected_generator = "normal"
+    @controller.select_generator(@selected_generator)
     @uni.setVisible(false)
     @norm.setVisible(true)
     @exp.setVisible(false)
@@ -122,7 +78,8 @@ class Window < Qt::MainWindow
   end
 
   def selectDetermined()
-    @controller.select_generator("determined")
+    @selected_generator = "determined"
+    @controller.select_generator(@selected_generator)
     @uni.setVisible(false)
     @norm.setVisible(false)
     @exp.setVisible(false)
@@ -147,7 +104,7 @@ class Window < Qt::MainWindow
     createStatusBar
 	  setWindowTitle('Parking lot simulator')
     adjustWindowSize(@w)
-    resize(@w.width+510, @w.height+0)
+    resize(@w.width+510, @w.height-100)
     setFixedSize(self.size());
 	end
 
@@ -301,7 +258,7 @@ class Window < Qt::MainWindow
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new('Uniform distribution controls')
     #T:
-    @uniform_t=[1, 600, 5]
+    @uniform_t=[1, 600, 3]
     uniformTLabel = Qt::Label.new(tr("T %d..%d:" % [@uniform_t[0], @uniform_t[1]]))
     @uniformTSpinBox = Qt::SpinBox.new do |i|
       i.range = @uniform_t[0]..@uniform_t[1]
@@ -454,9 +411,10 @@ class Window < Qt::MainWindow
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new("Information Panel")
     @clocker = TimeSetter.new
-    layout.addWidget @clock=DigitalClock.new(nil,@clocker), 0, 0, 1, 1
+    @day_night_label = Qt::Label.new(tr("Day"))
+    layout.addWidget @clock=DigitalClock.new(nil,@clocker, @day_night_label), 0, 0, 1, 1
     layout.addWidget @clock=createStatistics(), 0, 1, 1, 2
-    layout.addWidget @table=createTable(), 1, 0, 3, 3
+    layout.addWidget @table=createTable(), 2, 0, 3, 3
     box.layout=layout
     return box
   end
@@ -465,18 +423,13 @@ class Window < Qt::MainWindow
   def createStatistics
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new('Statistics')
-    @ticks=1000
-    @ticksLabel = Qt::Label.new("Ticks past:"+@ticks.to_s)
-    @total_time=1000
-    @totalTimeLabel = Qt::Label.new("Total simulation time: %d hours"%[@total_time])
-    @total_cars=1000
-    @totalCarsLabel = Qt::Label.new("Total cars spawned: %d"%[@total_cars])
-    @money_earned=1000
-    @totalMoneyLabel = Qt::Label.new("Money earned: %d $"%[@money_earned])
-    @money_per_hour=@money_earned/@total_time
-    @hourMoneyLabel = Qt::Label.new("Money earned: %d $ / hour"%[@money_per_hour])
+    @ticksLabel = Qt::Label.new("")
+    @totalTimeLabel = Qt::Label.new("")
+    @totalCarsLabel = Qt::Label.new("")
+    @totalMoneyLabel = Qt::Label.new("")
+    @hourMoneyLabel = Qt::Label.new("")
     layout.addWidget(@ticksLabel, 0, 0)
-    #layout.addWidget(@totalTimeLabel, 1, 0)
+    layout.addWidget(@totalTimeLabel, 1, 0)
     layout.addWidget(@totalCarsLabel, 2, 0)
     layout.addWidget(@totalMoneyLabel, 3, 0)
     layout.addWidget(@hourMoneyLabel, 4, 0)
@@ -588,12 +541,13 @@ class Window < Qt::MainWindow
 
 
     @ticksLabel.setText("Ticks past:"+cashier.ticks.to_s)
-    #@totalTimeLabel.setText("Total simulation time: %d hours"%[(cashier.ticks/cashier.time_scale)])
+    @totalTimeLabel.setText("Total simulation time: %d hours, %d min"%[cashier.time_past.hour, cashier.time_past.min])
     @totalCarsLabel.setText("Total cars spawned: "+cashier.car_counter.to_s)
     @totalMoneyLabel.setText("Money earned: %d $"%[cashier.money])
-    @money_per_hour=cashier.money/Float(cashier.ticks/cashier.time_scale)
-    @hourMoneyLabel.setText("Money pet hour: %f $"%[@money_per_hour])
-
+    @money_per_hour=Float(cashier.money)/Float(cashier.time_past.hour+cashier.time_past.min/60)
+    @money_per_hour = (@money_per_hour==Float::INFINITY or @money_per_hour.nan?) ? 0: @money_per_hour
+    @hourMoneyLabel.setText("Money per hour: %d $"%[@money_per_hour.round])
+    cashier.night? ? @day_night_label.setText("Night") : @day_night_label.setText(" Day")
     if @cache.nil?
       @cache=1
       createTableRows cashier.spots.length
@@ -616,4 +570,60 @@ class Window < Qt::MainWindow
     @cache=nil
   end
 
+end
+
+class TimeSetter
+  attr_accessor :job
+end
+
+class DigitalClock < Qt::LCDNumber
+  attr_accessor :time
+  # Constructs a DigitalClock widget
+  def initialize(parent, time_setter, label)
+    super(parent)
+    @time = Time.now
+    setSegmentStyle(Filled)
+    showTime()
+    resize(150, 150)
+    time_setter.job=(lambda{|t| setTime(t);})
+    layout = Qt::GridLayout.new
+    self.layout=layout
+    font = Qt::Font.new
+    font.setPointSize(26)
+    label.setFont(font)
+    layout.addWidget Qt::Label.new(""), 0, 0
+    layout.addWidget Qt::Label.new(""), 1, 0
+    layout.addWidget label,2,0,1,0
+  end
+
+  #def forward(seconds)
+  #  @time = @time + seconds
+  #  showTime
+  #end
+
+  def setTime(time)
+    @time = time
+    showTime
+  end
+
+  def night?
+    @time.hour<8 || @time.hour>22
+  end
+
+  def showTime()
+    hour = @time.hour.to_s
+    hour = hour.length==1 ? '0'+hour : hour
+    minutes = @time.min.to_s
+    minutes = minutes.length==1 ? '0'+minutes : minutes
+    display(hour+":"+minutes)
+    #
+    #
+    #if night?
+    #  @color = Qt::Color.new(rand(0), rand(0), rand(0))
+    #else
+    #  @color = Qt::Color.new(rand(255), rand(255), rand(255))
+    #end
+    #@brush = Qt::Brush.new(@color)
+    #self.window.view.setBackground(@brush)
+  end
 end

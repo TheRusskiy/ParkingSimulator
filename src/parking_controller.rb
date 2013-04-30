@@ -25,6 +25,8 @@ class ParkingController
     @view.applyPrices
     @view.applyControls
     @view.setRandomProperties()
+    @view.display_information(@cashier)
+    @view.selectUniform()
   #  TODO fetch default values from view
   end
   def refresh_model
@@ -32,7 +34,7 @@ class ParkingController
     @core.set_frequency @simulation_speed*@discretization
     @core.set_car_road_speed @car_road_speed/@discretization
     @core.set_parking_speed @car_parking_speed/@discretization
-    @core.set_parking_time_scale @parking_time_scale/@discretization
+    @core.set_parking_time_scale @parking_time_scale
     @core.set_min_parking_time @min_parking_time*60 #minutes to seconds
     @core.set_max_parking_time (@min_parking_time+@max_parking_time)*60 # max is shift from min
     @core.set_safe_gap @safe_gap
