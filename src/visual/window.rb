@@ -159,7 +159,7 @@ class Window < Qt::MainWindow
   def selectScale()
     ok = Qt::Boolean.new
     input = Qt::InputDialog.getInteger(self, tr("Scale selection"),
-                                       tr("Scale:"), @view_scale, 1, 5, 1, ok)
+                                       tr("Scale 1..5:"), @view_scale, 1, 5, 1, ok)
     if ok
       @view_scale=input
       refresh_view_scale()
@@ -220,7 +220,7 @@ class Window < Qt::MainWindow
     pMinLabel = Qt::Label.new(tr("Minimal parking time %d..%d:" % [@min_park[0], @min_park[1]]))
     @pMinSpinBox = Qt::SpinBox.new do |i|
       i.range = @min_park[0]..@min_park[1]
-      i.singleStep = 1
+      i.singleStep = 60
       i.value = @min_park[2]
       i.suffix = ' minutes'
     end

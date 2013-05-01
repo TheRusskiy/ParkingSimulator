@@ -145,7 +145,7 @@ class Core
     if @meaningful_tick;
       @cashier.turn
       car = @generator.next_car
-      @controller.force_draw
+      if @controller; @controller.force_draw end
     if car and @road.free_space?(car.length+@road.safe_gap)
       @cars<<car
       car.cashier=@cashier
