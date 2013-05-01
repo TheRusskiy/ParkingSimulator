@@ -9,14 +9,7 @@ class Presenter
   require_relative '../road/parking_spot'
   require 'Qt'
   attr_reader :scene
-  @scale
-  @scene
-  def scale=(value)
-    @scale=value
-  end
-  def scale
-    @scale
-  end
+  attr_accessor :scale
   def initialize(view, scale = 5)
     @scene = view.scene
     @scale = scale

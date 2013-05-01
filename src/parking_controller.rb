@@ -27,6 +27,7 @@ class ParkingController
     @view.setRandomProperties()
     @view.display_information(@cashier)
     @view.selectUniform()
+    @view.refresh_view_scale
   #  TODO fetch default values from view
   end
   def refresh_model
@@ -66,6 +67,10 @@ class ParkingController
 
   def select_generator(name)
     @core.select_generator(name)
+  end
+
+  def change_scale(value)
+    @core.change_scale(value)
   end
 
 end

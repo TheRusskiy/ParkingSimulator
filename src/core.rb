@@ -209,6 +209,10 @@ class Core
     end
   end
 
+  def change_scale(value)
+    @presenter.scale=value
+  end
+
   def startStop()
     if @tick_thread.working
       @tick_thread.stop

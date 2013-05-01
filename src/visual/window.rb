@@ -6,7 +6,7 @@ class Window < Qt::MainWindow
   attr_accessor :controller
 
   slots 'applyControls()', 'startStop()', 'selectUniform()', 'selectExponential()', 'selectNormal()',
-        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()', 'selectStructure2()'
+        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()', 'selectStructure2()', 'selectScale()'
 
   def closeProgram()
     exit
@@ -100,12 +100,13 @@ class Window < Qt::MainWindow
     @w.layout.setRowStretch(1, 0)
     @w.layout.setColumnStretch(0, 5)
     @w.layout.setColumnStretch(1, 2)
+    @view_scale = 4
     createMenus
     createStatusBar
 	  setWindowTitle('Parking lot simulator')
     adjustWindowSize(@w)
     resize(@w.width+510, @w.height-100)
-    setFixedSize(self.size());
+    #setFixedSize(self.size());
 	end
 
   def adjustWindowSize(item)
@@ -149,6 +150,20 @@ class Window < Qt::MainWindow
     @controller.truck= @truckSpinBox.value
     @controller.night= @nightSpinBox.value
     @controller.refresh_prices
+  end
+
+  def refresh_view_scale()
+    @controller.change_scale(@view_scale)
+  end
+
+  def selectScale()
+    ok = Qt::Boolean.new
+    input = Qt::InputDialog.getInteger(self, tr("Scale selection"),
+                                       tr("Scale:"), @view_scale, 1, 5, 1, ok)
+    if ok
+      @view_scale=input
+      refresh_view_scale()
+    end
   end
 
   def createTimeControls()
@@ -514,6 +529,7 @@ class Window < Qt::MainWindow
 
     @setScaleAct = Qt::Action.new("Choose scale", self)
     @setScaleAct.statusTip = "Choose a new scale from a dialog"
+    connect(@setScaleAct, SIGNAL('triggered()'), self, SLOT('selectScale()'))
     @viewMenu = menuBar().addMenu("View")
     @viewMenu.addAction(@setScaleAct)
 

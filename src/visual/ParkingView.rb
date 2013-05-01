@@ -3,12 +3,12 @@ require_relative 'GraphicCar'
 
 class ParkingView < Qt::GraphicsView
   attr_reader :scene
-  X=700
-  Y=200
+  X=800
+  Y=300
 
   def initialize(scene)
     @scene =  scene
-    @scene.setSceneRect(0, 0, X, Y)
+    @scene.setSceneRect(50, 00, X, Y)
     @scene.itemIndexMethod = Qt::GraphicsScene::NoIndex
     #super.resetCachedContent
     super(@scene)
@@ -20,7 +20,7 @@ class ParkingView < Qt::GraphicsView
     self.dragMode = Qt::GraphicsView::ScrollHandDrag
     self.setWindowTitle(QT_TRANSLATE_NOOP(Qt::GraphicsView, "Parking simulator"))
 
-    self.resize(X, Y)
+    #self.resize(X, Y)
   end
 
 end
