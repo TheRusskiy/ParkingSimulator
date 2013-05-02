@@ -28,8 +28,9 @@ class ParkingController
     @view.display_information(@cashier)
     @view.selectUniform()
     @view.refresh_view_scale
-  #  TODO fetch default values from view
+    @view.setParkingPercent
   end
+
   def refresh_model
     @discretization=Float(@discretization)
     @core.set_frequency @simulation_speed*@discretization
@@ -71,6 +72,10 @@ class ParkingController
 
   def change_scale(value)
     @core.change_scale(value)
+  end
+
+  def parking_chance=(value)
+    @core.chance_to_park=value
   end
 
 end

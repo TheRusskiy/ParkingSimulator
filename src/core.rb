@@ -8,7 +8,7 @@ require '../src/road/parking_lot'
 require '../src/road/parking_spot'
 require '../src/cashier'
 class Core
-  attr_accessor :controller, :meaningful_tick, :cashier
+  attr_accessor :controller, :meaningful_tick, :cashier, :chance_to_park
   attr_reader :uniform_t
   attr_reader :normal_variance
   attr_reader :normal_mean
@@ -219,7 +219,8 @@ class Core
   def generateParkingTime()
     @min_time||=60
     @max_time||=120
-    if rand(4)!=0; return 0 end
+    @chance_to_park||=25
+    if rand(100)>@chance_to_park; return 0 end
     @random_time||=Random.new
     @random_time.rand(@max_time-@min_time)+@min_time
   end

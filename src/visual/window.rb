@@ -6,7 +6,7 @@ class Window < Qt::MainWindow
   attr_accessor :controller
 
   slots 'applyControls()', 'startStop()', 'selectUniform()', 'selectExponential()', 'selectNormal()',
-        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()', 'selectStructure2()', 'selectStructure3()', 'selectScale()'
+        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()', 'selectStructure2()', 'selectStructure3()', 'selectScale()', 'setParkingPercent()'
 
   def closeProgram()
     exit
@@ -40,6 +40,10 @@ class Window < Qt::MainWindow
     @controller.max_parking_time= @pMaxSpinBox.value
     @controller.safe_gap= @pSafeSpinBox.value
     @controller.refresh_model
+  end
+
+  def setParkingPercent()
+    @controller.parking_chance= @parkingChanceSpinBox.value
   end
 
   def setRandomProperties()
@@ -136,12 +140,13 @@ class Window < Qt::MainWindow
   def createControlGroupBox
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new("Control Panel")
-    layout.addWidget w1=createTimeControls(), 0, 0, 1, 2
+    layout.addWidget w1=createTimeControls(), 0, 0, 2, 2
     layout.addWidget @uni=createUniformControls(), 0, 2, 1, 1
-    layout.addWidget @norm=createNormalControls(), 0, 3, 1, 1
-    layout.addWidget @exp=createExponentialControls(), 0, 4, 1, 1
-    layout.addWidget @det=createDeterminedControls(), 0, 5, 1, 1
-    layout.addWidget w6=createPriceControls(), 0, 6, 1, 1
+    layout.addWidget @norm=createNormalControls(), 0, 2, 1, 1
+    layout.addWidget @exp=createExponentialControls(), 0, 2, 1, 1
+    layout.addWidget @det=createDeterminedControls(), 0, 2, 1, 1
+    layout.addWidget @parking_percent_form=createWantsToParkControls(), 1, 2, 1, 1
+    layout.addWidget w6=createPriceControls(), 0, 3, 2, 1
     @norm.setVisible(false)
     @exp.setVisible(false)
     @det.setVisible(false)
@@ -271,6 +276,29 @@ class Window < Qt::MainWindow
     layout.addWidget(@pSafeSpinBox, 7, 1)
     layout.addWidget(@applyControlsButton, 8, 0)
     layout.addWidget(@startStopControlsButton, 8, 1)
+    box.layout=layout
+    return box
+  end
+
+  def createWantsToParkControls()
+    layout = Qt::GridLayout.new
+    box = Qt::GroupBox.new()
+    #T:
+    @parkingChance=[0, 100, 25]
+    parkingChanceTLabel = Qt::Label.new(tr("Percent of cars wanting to park %d..%d:" % [@parkingChance[0], @parkingChance[1]]))
+    @parkingChanceSpinBox = Qt::SpinBox.new do |i|
+      i.range = @parkingChance[0]..@parkingChance[1]
+      i.singleStep = 1
+      i.value = @parkingChance[2]
+      i.prefix = ''
+      i.suffix = ' %'
+    end
+    @applyPercentButton = createButton("Apply", SLOT('setParkingPercent()'))
+    layout.addWidget(parkingChanceTLabel, 0, 0)
+    layout.addWidget(@parkingChanceSpinBox, 1, 0)
+    layout.addWidget(@applyPercentButton, 2, 0)
+    layout.setRowStretch(3, 1)
+
     box.layout=layout
     return box
   end
