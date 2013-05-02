@@ -6,7 +6,7 @@ class Window < Qt::MainWindow
   attr_accessor :controller
 
   slots 'applyControls()', 'startStop()', 'selectUniform()', 'selectExponential()', 'selectNormal()',
-        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()', 'selectStructure2()', 'selectScale()'
+        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()', 'selectStructure2()', 'selectStructure3()', 'selectScale()'
 
   def closeProgram()
     exit
@@ -14,13 +14,19 @@ class Window < Qt::MainWindow
 
   def selectStructure1()
     @controller.core.createCoordinates
-    @controller.core.createRoads
+    applyControls()
     invalidate_table_cache
   end
 
   def selectStructure2()
     @controller.core.createCoordinates_2
-    @controller.core.createRoads
+    applyControls()
+    invalidate_table_cache
+  end
+
+  def selectStructure3()
+    @controller.core.createCoordinates_3
+    applyControls()
     invalidate_table_cache
   end
 
@@ -428,7 +434,7 @@ class Window < Qt::MainWindow
     @clocker = TimeSetter.new
     @day_night_label = Qt::Label.new(tr("Day"))
     layout.addWidget @clock=DigitalClock.new(nil,@clocker, @day_night_label), 0, 0, 1, 1
-    layout.addWidget @clock=createStatistics(), 0, 1, 1, 2
+    layout.addWidget @stats=createStatistics(), 0, 1, 1, 2
     layout.addWidget @table=createTable(), 2, 0, 3, 3
     box.layout=layout
     return box
@@ -545,6 +551,10 @@ class Window < Qt::MainWindow
     @setStructureAct2.statusTip = "Choose parking lot structure"
     @structureMenu.addAction(@setStructureAct2)
     connect(@setStructureAct2, SIGNAL('triggered()'), self, SLOT('selectStructure2()'))
+    @setStructureAct3 = Qt::Action.new("Map #3", self)
+    @setStructureAct3.statusTip = "Choose parking lot structure"
+    @structureMenu.addAction(@setStructureAct3)
+    connect(@setStructureAct3, SIGNAL('triggered()'), self, SLOT('selectStructure3()'))
 
     @helpMenu = menuBar().addMenu("Help")
     @helpMenu.addAction(@aboutAct)
@@ -553,8 +563,8 @@ class Window < Qt::MainWindow
 
   def display_information(cashier)
     time=cashier.time
-    @clocker.job.call(time)
-
+    #@clocker.job.call(time)
+    @clock.setTime(time)
 
     @ticksLabel.setText("Ticks past:"+cashier.ticks.to_s)
     @totalTimeLabel.setText("Total simulation time: %d hours, %d min"%[cashier.time_past.hour, cashier.time_past.min])

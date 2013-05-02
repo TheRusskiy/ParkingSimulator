@@ -32,15 +32,7 @@ class Core
     @presenter = Presenter.new(view, 4)
 
     createCoordinates()
-    createRoads()
 
-    usual_speed=1
-    lot_speed=0.5
-    entrance_exit_speed=0.5
-    @road.speed=usual_speed
-    @entrance.speed=entrance_exit_speed
-    @parking_exit.speed=entrance_exit_speed
-    @lot.speed = lot_speed
 
     @tick_thread.set_frequency(30)
     @tick_thread.job = (lambda{tick})
@@ -76,11 +68,13 @@ class Core
     @road3_end = Coordinate.new(@p_length-120, @p_height-10)
     @to_initial_road = 150
     @parking_exit_coord = @road.coordinate_at @to_initial_road
+    createRoads()
+    @presenter.redraw
   end
 
   def createCoordinates_2
     clear_previous()
-    @p_height=40
+    @p_height=60
     @p_length=160
     @to_entrance=40
     @road_start = Coordinate.new(@p_length, @p_height)
@@ -93,7 +87,52 @@ class Core
     @road3_end = Coordinate.new(@p_length-140, @p_height-20)
     @to_initial_road = 150
     @parking_exit_coord = @road.coordinate_at @to_initial_road
+    createRoads()
+    @presenter.redraw
   end
+
+  def createCoordinates_3
+    clear_previous()
+    level = 40
+    length = 160
+    height = 80
+    top = 0
+    @road1_start = Coordinate.new(length, top+height)
+    @road2_start = Coordinate.new(length, top)
+    @road3_start = Coordinate.new(20, top)
+    @road3_end = Coordinate.new(20, top+height)
+    @road = Road.new(@road1_start, @road2_start)
+    @road2 = Road.new(@road2_start, @road3_start)
+    @road3 = Road.new(@road3_start, @road3_end)
+    @parking_start = Coordinate.new(@road.coordinate_at(level).x, @road.coordinate_at(level).y)
+    @parking_end = Coordinate.new(@road3.coordinate_at(level).x, @road3.coordinate_at(level).y)
+    @parking_road = ParkingRoad.new(@parking_start, @parking_end)
+    @road.add_parking_entrance(@parking_road, level)
+
+    @lot = ParkingLot.new
+    @lot.set_entrance @parking_road
+    @lot.add_road_segment @parking_road
+    @parking_road.connect_at @road3, level
+    @road.extension = @road2
+    @road2.extension = @road3
+
+    @cashier.spots=@lot.get_all_spots
+
+    @presenter.clear
+    @presenter.add(@road)
+    @presenter.add(@road2)
+    @presenter.add(@road3)
+    @presenter.add(@parking_road)
+    @presenter.add(@cashier)
+    @roads = Array.new
+    @roads<<@road
+    @roads<<@road2
+    @roads<<@road3
+    @roads<<@parking_road
+
+    @presenter.redraw
+  end
+
 
   def createRoads
     @entrance = Road.new(@entrance_start, @entrance_end)
@@ -132,6 +171,14 @@ class Core
     @roads<<@road3
     @roads<<@entrance
     @roads<<@parking_exit
+
+    usual_speed=1
+    lot_speed=0.5
+    entrance_exit_speed=0.5
+    @road.speed=usual_speed
+    @entrance.speed=entrance_exit_speed
+    @parking_exit.speed=entrance_exit_speed
+    @lot.speed = lot_speed
   end
 
   def tick
@@ -182,9 +229,14 @@ class Core
   end
 
   def set_car_road_speed(speed)
-    @road.speed=speed
-    @entrance.speed=speed
-    @parking_exit.speed=speed
+    @roads.each do |road|
+      if road.class.name == 'Road'
+        road.speed = speed
+      end
+    end
+    #@road.speed=speed
+    #@entrance.speed=speed
+    #@parking_exit.speed=speed
   end
 
   def set_parking_speed(speed)
@@ -211,6 +263,7 @@ class Core
 
   def change_scale(value)
     @presenter.scale=value
+    @presenter.redraw
   end
 
   def startStop()
