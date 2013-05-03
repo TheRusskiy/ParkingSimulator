@@ -1,6 +1,5 @@
 require_relative 'borderlayout'
 require_relative 'parkingview'
-require 'launchy'
 
 class Window < Qt::MainWindow
   attr_reader :view
@@ -614,7 +613,7 @@ class Window < Qt::MainWindow
     @clock.setTime(time)
 
     @ticksLabel.setText("Ticks past:"+cashier.ticks.to_s)
-    @totalTimeLabel.setText("Total simulation time: %d hours, %d min"%[cashier.time_past.hour, cashier.time_past.min])
+    @totalTimeLabel.setText("Total simulation time: %d days %d hours, %d min"%[(cashier.time_past.day-1), cashier.time_past.hour, cashier.time_past.min])
     @totalCarsLabel.setText("Total cars spawned: "+cashier.car_counter.to_s)
     @totalMoneyLabel.setText("Money earned: %d $"%[cashier.money])
     @money_per_hour=Float(cashier.money)/Float(cashier.time_past.hour+cashier.time_past.min/60)

@@ -1,4 +1,6 @@
 require_relative 'core'
+require 'time'
+require 'date'
 
 class Cashier
   attr_accessor :time_scale, :domestic_price, :imported_price, :spots
@@ -9,7 +11,7 @@ class Cashier
       attr_accessor :cashier
     end
     @time_past_seconds=0
-    @time = Time.now
+    @time = Time.new(Time.now - Time.now)
     @ticks=0
     @money=0
     @car_counter=0
@@ -20,7 +22,7 @@ class Cashier
   end
 
   def time_past
-    @time-@time_past_seconds
+    @time
   end
 
   def turn
