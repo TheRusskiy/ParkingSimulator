@@ -1,4 +1,4 @@
-require '../src/core'
+require_relative 'core'
 
 class Cashier
   attr_accessor :time_scale, :domestic_price, :imported_price, :spots

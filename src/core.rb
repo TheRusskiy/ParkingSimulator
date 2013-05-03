@@ -1,12 +1,12 @@
-require '../src/road/road'
-require '../src/road/car_generator'
-require '../src/road/coordinate'
-require '../src/timer_thread'
-require '../src/visual/presenter'
-require '../src/road/parking_road'
-require '../src/road/parking_lot'
-require '../src/road/parking_spot'
-require '../src/cashier'
+require_relative 'road/road'
+require_relative 'road/car_generator'
+require_relative 'road/coordinate'
+require_relative 'timer_thread'
+require_relative 'visual/presenter'
+require_relative 'road/parking_road'
+require_relative 'road/parking_lot'
+require_relative 'road/parking_spot'
+require_relative 'cashier'
 class Core
   attr_accessor :controller, :meaningful_tick, :cashier, :chance_to_park
   attr_reader :uniform_t

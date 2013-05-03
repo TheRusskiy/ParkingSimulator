@@ -1,12 +1,15 @@
 require_relative 'borderlayout'
 require_relative 'parkingview'
+require 'launchy'
 
 class Window < Qt::MainWindow
   attr_reader :view
   attr_accessor :controller
 
   slots 'applyControls()', 'startStop()', 'selectUniform()', 'selectExponential()', 'selectNormal()',
-        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()', 'selectStructure2()', 'selectStructure3()', 'selectScale()', 'setParkingPercent()'
+        'selectDetermined()', 'setRandomProperties()', 'closeProgram()', 'applyPrices()', 'selectStructure1()',
+        'selectStructure2()', 'selectStructure3()', 'selectScale()', 'setParkingPercent()',
+        'showAbout()', 'showHelp()'
 
   def closeProgram()
     exit
@@ -175,6 +178,18 @@ class Window < Qt::MainWindow
       @view_scale=input
       refresh_view_scale()
     end
+  end
+
+  def showAbout()
+    @about_message = tr("<p>Message boxes have a caption, a text, " +
+                      "and up to three buttons, each with standard or custom texts." +
+                      "<p>Click a button or press Esc.")
+    Qt::MessageBox::information(self, tr("Qt::MessageBox.showInformation()"), @about_message)
+  end
+
+  def showHelp()
+    system 'start file:///'+File.dirname($0)+'/guide_ru.html' #of Dir.pwd
+    #Launchy::Browser.run("./guide_ru.html")
   end
 
   def createTimeControls()
@@ -567,8 +582,6 @@ class Window < Qt::MainWindow
     @viewMenu = menuBar().addMenu("View")
     @viewMenu.addAction(@setScaleAct)
 
-    #@formatMenu = @viewMenu.addMenu("Scale")
-    #@formatMenu.addAction(@boldAct)
 
     @structureMenu = menuBar().addMenu("Structure")
     @setStructureAct = Qt::Action.new("Map #1", self)
@@ -585,7 +598,13 @@ class Window < Qt::MainWindow
     connect(@setStructureAct3, SIGNAL('triggered()'), self, SLOT('selectStructure3()'))
 
     @helpMenu = menuBar().addMenu("Help")
+    @aboutAct = Qt::Action.new("About", self)
+    @aboutAct.statusTip = "View information about author of the program"
+    connect(@aboutAct, SIGNAL('triggered()'), self, SLOT('showAbout()'))
     @helpMenu.addAction(@aboutAct)
+    @helpAct = Qt::Action.new("Help", self)
+    @helpAct.statusTip = "Open help HTML file in your OS browser"
+    connect(@helpAct, SIGNAL('triggered()'), self, SLOT('showHelp()'))
     @helpMenu.addAction(@helpAct)
   end
 

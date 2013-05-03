@@ -1,5 +1,5 @@
 class TimerThread
-  require '../src/exceptions/needs_set_up_exception'
+  require_relative 'exceptions/needs_set_up_exception'
   require 'thread'
   require 'Qt4'
   attr_reader :working
