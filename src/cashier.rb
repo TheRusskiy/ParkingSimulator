@@ -5,6 +5,7 @@ require 'date'
 class Cashier
   attr_accessor :time_scale, :domestic_price, :imported_price, :spots
   attr_accessor :truck_price, :night_price, :time, :money, :ticks, :car_counter
+  attr_accessor :billing_enabled
   def initialize
     @time_scale=1
     Car.class_eval do
@@ -15,6 +16,7 @@ class Cashier
     @ticks=0
     @money=0
     @car_counter=0
+    @billing_enabled=true
   end
 
   def night?
@@ -35,6 +37,7 @@ class Cashier
   end
 
   def bill(car, turns)
+    return unless @billing_enabled
     type=car.getModel
     money=0
     case type

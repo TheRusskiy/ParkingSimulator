@@ -78,4 +78,8 @@ class ParkingController
     @core.chance_to_park=value
   end
 
+  def truck_percent=(value)
+    @core.truck_percent=value
+  end
+
 end

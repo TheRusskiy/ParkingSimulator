@@ -1,6 +1,5 @@
 class CarGenerator
   require 'rubystats'
-  $truck_probability=3
   def self.uniform(delay_between_cars, seed=-1)
     return UniformGenerator.new(delay_between_cars, seed)
   end
@@ -17,6 +16,7 @@ end
 private
 module AbstractRandomGenerator
   attr_writer :spawned_car
+  attr_accessor :truck_probability
   @delay
   def spawns?
     throw 'abstract!'
@@ -32,7 +32,8 @@ module AbstractRandomGenerator
   end
 
   def create_car()
-    if rand($truck_probability) == 0
+    @truck_probability||=25
+    if rand(100) < @truck_probability
       return Truck.new
     else
       return Car.new

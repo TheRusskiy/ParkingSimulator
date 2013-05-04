@@ -205,6 +205,7 @@ class Core
       if car; @generator.spawned_car=car end #preserve trucks in high load
     end
     end
+    @cashier.billing_enabled= @meaningful_tick
     for each_car in @cars
       each_car.move
       if each_car.placement.nil?; @cars.delete(each_car); end;
@@ -312,5 +313,12 @@ class Core
   def determined_interval=(value)
     @determined_interval=value
     @determined=CarGenerator.determined(value)
+  end
+
+  def truck_percent=(value)
+    @normal.truck_probability=value
+    @exponential.truck_probability=value
+    @determined.truck_probability=value
+    @uniform.truck_probability=value
   end
 end

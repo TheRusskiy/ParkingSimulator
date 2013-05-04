@@ -61,6 +61,9 @@ class Car
   end
 
   def turn
+    if @cashier && (not @cashier.billing_enabled)
+      return
+    end
     turns = @cashier ? @cashier.time_scale : 1
     @turns_to_wait=@turns_to_wait - turns
     turns = @turns_to_wait < 0 ? 0 : turns

@@ -46,6 +46,7 @@ class Window < Qt::MainWindow
 
   def setParkingPercent()
     @controller.parking_chance= @parkingChanceSpinBox.value
+    @controller.truck_percent= @truckChanceSpinBox.value
   end
 
   def setRandomProperties()
@@ -147,7 +148,7 @@ class Window < Qt::MainWindow
     layout.addWidget @norm=createNormalControls(), 0, 2, 1, 1
     layout.addWidget @exp=createExponentialControls(), 0, 2, 1, 1
     layout.addWidget @det=createDeterminedControls(), 0, 2, 1, 1
-    layout.addWidget @parking_percent_form=createWantsToParkControls(), 1, 2, 1, 1
+    layout.addWidget @parking_percent_form=createChanceControls(), 1, 2, 1, 1
     layout.addWidget w6=createPriceControls(), 0, 3, 2, 1
     @norm.setVisible(false)
     @exp.setVisible(false)
@@ -294,25 +295,38 @@ class Window < Qt::MainWindow
     return box
   end
 
-  def createWantsToParkControls()
+  def createChanceControls()
     layout = Qt::GridLayout.new
     box = Qt::GroupBox.new()
-    #T:
+    #Cars wanting to park:
     @parkingChance=[0, 100, 25]
-    parkingChanceTLabel = Qt::Label.new(tr("Percent of cars wanting to park %d..%d:" % [@parkingChance[0], @parkingChance[1]]))
+    parkingChanceTLabel = Qt::Label.new(tr("Parking %d..%d:" % [@parkingChance[0], @parkingChance[1]]))
     @parkingChanceSpinBox = Qt::SpinBox.new do |i|
       i.range = @parkingChance[0]..@parkingChance[1]
       i.singleStep = 1
       i.value = @parkingChance[2]
       i.prefix = ''
       i.suffix = ' %'
+      i.statusTip='Percent of cars wanting to park'
+    end
+    #Truck percent:
+    @truckChance=[0, 100, 25]
+    truckChanceTLabel = Qt::Label.new(tr("Trucks %d..%d:" % [@truckChance[0], @truckChance[1]]))
+    @truckChanceSpinBox = Qt::SpinBox.new do |i|
+      i.range = @truckChance[0]..@truckChance[1]
+      i.singleStep = 1
+      i.value = @truckChance[2]
+      i.prefix = ''
+      i.suffix = ' %'
+      i.statusTip='Chance of spawned car to be a truck'
     end
     @applyPercentButton = createButton("Apply", SLOT('setParkingPercent()'))
     layout.addWidget(parkingChanceTLabel, 0, 0)
     layout.addWidget(@parkingChanceSpinBox, 1, 0)
-    layout.addWidget(@applyPercentButton, 2, 0)
-    layout.setRowStretch(3, 1)
-
+    layout.addWidget(truckChanceTLabel, 0, 1)
+    layout.addWidget(@truckChanceSpinBox, 1, 1)
+    layout.addWidget(@applyPercentButton, 2, 0, 2, 2)
+    #layout.setRowStretch(3, 1)
     box.layout=layout
     return box
   end
