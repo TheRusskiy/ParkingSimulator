@@ -181,10 +181,18 @@ class Window < Qt::MainWindow
   end
 
   def showAbout()
-    @about_message = tr("<p>Message boxes have a caption, a text, " +
-                      "and up to three buttons, each with standard or custom texts." +
-                      "<p>Click a button or press Esc.")
-    Qt::MessageBox::information(self, tr("Qt::MessageBox.showInformation()"), @about_message)
+    @about_message = tr(            "MINISTRY OF EDUCATION AND SCIENCE OF THE RUSSIAN FEDERATION\n"+
+                                        "FEDERAL STATE EDUCATIONAL INSTITUTION\n"+
+                                        "OF HIGHER PROFESSIONAL EDUCATION\n"+
+                                        "\"SAMARA STATE AEROSPACE UNIVERSITY\n" +
+                                        "OF ACADEMICIAN S.P. KOROLYOV\"\n" +
+                                        "(NATIONAL RESEARCH UNIVERSITY) (SSAU) \n" +
+                                        "Chair of Computer Systems\n" +
+                                        "\n" +
+                                        "Author: Dmitry Ishkov\n" +
+                                        "Group: 6402\n" +
+                                        "Instructor: associate professor Larisa Zelenko")
+    Qt::MessageBox::information(self, tr("About"), @about_message)
   end
 
   def showHelp()
