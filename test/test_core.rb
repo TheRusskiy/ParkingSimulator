@@ -8,7 +8,7 @@ class TestCore < MiniTest::Unit::TestCase
   require '../src/visual/parkingview'
   @app = Qt::Application.new(ARGV)
   def setup
-    @core = Core.new(ParkingView.new(Qt::GraphicsScene.new))
+    @core = Core.new(Qt::GraphicsScene.new)
     @core.wont_be_nil
   end
 

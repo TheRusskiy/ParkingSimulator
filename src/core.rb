@@ -14,9 +14,8 @@ class Core
   attr_reader :normal_mean
   attr_reader :exponential_rate
   attr_reader :determined_interval
-  def initialize(view)
+  def initialize(scene)
     @cars = Array.new
-    @view=view
     @cashier = Cashier.new
     @tick_divisor=1
     @tick_acc=0
@@ -29,7 +28,7 @@ class Core
     @determined = CarGenerator.determined(10)
     @generator = @uniform
     @tick_thread = TimerThread.new
-    @presenter = Presenter.new(view, 4)
+    @presenter = Presenter.new(scene, 4)
 
     createCoordinates()
 
@@ -55,13 +54,13 @@ class Core
 
   def createCoordinates
     clear_previous()
-    @p_height=40
+    @p_height=60
     @p_length=180
     @to_entrance=30
     @road_start = Coordinate.new(@p_length, @p_height)
     @road_end = Coordinate.new(0, @p_height)
     @road = Road.new(@road_start, @road_end)
-    @entrance_start = Coordinate.new(@road_start.x-@to_entrance, @road.coordinate_at(@to_entrance).y)
+    @entrance_start = Coordinate.new(@road.coordinate_at(@to_entrance).x, @road.coordinate_at(@to_entrance).y)
     @entrance_end = Coordinate.new(@p_length-60, @p_height-10)
     @road2_start = Coordinate.new(@p_length-80, @p_height-40)
     @road3_start = Coordinate.new(@p_length-120, @p_height-40)
@@ -93,10 +92,10 @@ class Core
 
   def createCoordinates_3
     clear_previous()
-    level = 40
+    level = 30
     length = 160
-    height = 80
-    top = 0
+    height = 60
+    top = 10
     @road1_start = Coordinate.new(length, top+height)
     @road2_start = Coordinate.new(length, top)
     @road3_start = Coordinate.new(20, top)

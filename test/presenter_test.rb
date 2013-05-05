@@ -13,7 +13,7 @@ class PresenterTest < MiniTest::Unit::TestCase
   @app = Qt::Application.new(ARGV)
 
   def setup
-    @presenter = Presenter.new(ParkingView.new(Qt::GraphicsScene.new))
+    @presenter = Presenter.new(Qt::GraphicsScene.new)
     @c1 = Coordinate.new(60, 60)
     @c2 = Coordinate.new(0, 0)
     @road = Road.new(@c1, @c2)

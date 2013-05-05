@@ -6,7 +6,7 @@ require_relative 'parking_controller'
 
 app = Qt::Application.new(ARGV)
 window = Window.new()
-core = Core.new(window.view)
+core = Core.new(window.view.scene)
 controller = ParkingController.new(core, window)
 window.show
 #core.start

@@ -10,8 +10,8 @@ class Presenter
   require 'Qt'
   attr_reader :scene
   attr_accessor :scale
-  def initialize(view, scale = 5)
-    @scene = view.scene
+  def initialize(scene, scale = 5)
+    @scene = scene
     @scale = scale
     @objects = Array.new
     add_draw_item_to_classes()

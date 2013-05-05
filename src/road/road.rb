@@ -80,7 +80,7 @@ class Road
     #if car.wants_to_park? and @parking_entrance and ((distance_from_beginning car)-distance_to_parking_entrance>=0) and @parking_entrance.parking_lot.has_free_spots?(car.required_spots)
     if shall_park? car, by_space
       move_car_to(car, @parking_entrance)
-    elsif DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])>=@length
+    elsif DistanceCalculator.distance_between(car.coordinate, @coordinates[:start])>=@length-0.0001 #against calculation imperfections
       move_car_to(car, @extension, @coordinate_to_connect)
     end
   end

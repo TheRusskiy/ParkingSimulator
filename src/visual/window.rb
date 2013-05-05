@@ -250,7 +250,7 @@ class Window < Qt::MainWindow
       i.suffix = 'x road'
     end
     #Minimal parking time:
-    @min_park=[1, 1440, 60]
+    @min_park=[1, 1440, 300]
     pMinLabel = Qt::Label.new(tr("Minimal parking time %d..%d:" % [@min_park[0], @min_park[1]]))
     @pMinSpinBox = Qt::SpinBox.new do |i|
       i.range = @min_park[0]..@min_park[1]
@@ -469,13 +469,14 @@ class Window < Qt::MainWindow
       i.suffix = ' $ / hour'
     end
     #Night discount:
-    @night_price=[1, 100, 60]
+    @night_price=[0, 100, 60]
     nightLabel = Qt::Label.new(tr("Night discount %d..%d:" % [@night_price[0], @night_price[1]]))
     @nightSpinBox = Qt::SpinBox.new do |i|
       i.range = @night_price[0]..@night_price[1]
       i.singleStep = 1
       i.value = @night_price[2]
-      i.suffix = '% of day price'
+      i.suffix = '% off day price'
+      i.statusTip = 'Percentage subtracted from usual price during nighttime'
     end
     @applyPricesButton = createButton("Apply", SLOT('applyPrices()'))
     layout.addWidget(domesticLabel, 0, 0)
@@ -623,7 +624,7 @@ class Window < Qt::MainWindow
     @aboutAct.statusTip = "View information about author of the program"
     connect(@aboutAct, SIGNAL('triggered()'), self, SLOT('showAbout()'))
     @helpMenu.addAction(@aboutAct)
-    @helpAct = Qt::Action.new("Help", self)
+    @helpAct = Qt::Action.new("User guide", self)
     @helpAct.statusTip = "Open help HTML file in your OS browser"
     connect(@helpAct, SIGNAL('triggered()'), self, SLOT('showHelp()'))
     @helpMenu.addAction(@helpAct)

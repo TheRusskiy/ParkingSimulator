@@ -45,7 +45,7 @@ class Cashier
       when "truck"; money=@truck_price
       when "imported"; money=@imported_price
     end
-    if night?; money=money*@night_price/100 end
+    if night?; money=money*(100-@night_price)/100 end
     money=turns*money/60/60;
     @money=@money+money
   end
