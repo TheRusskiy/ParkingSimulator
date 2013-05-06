@@ -196,7 +196,7 @@ class Window < Qt::MainWindow
   end
 
   def showHelp()
-    system 'start file:///'+File.dirname($0)+'/guide_ru.html' #of Dir.pwd
+    system 'start file:///'+File.dirname($0)+'/resources/guide_ru.html' #of Dir.pwd
     #Launchy::Browser.run("./guide_ru.html")
   end
 
