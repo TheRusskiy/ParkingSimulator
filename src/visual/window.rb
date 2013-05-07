@@ -638,8 +638,8 @@ class Window < Qt::MainWindow
     @ticksLabel.setText("Ticks past:"+cashier.ticks.to_s)
     @totalTimeLabel.setText("Total simulation time: %d days %d hours, %d min"%[(cashier.time_past.day-1), cashier.time_past.hour, cashier.time_past.min])
     @totalCarsLabel.setText("Total cars spawned: "+cashier.car_counter.to_s)
-    @totalMoneyLabel.setText("Money earned: %d $"%[cashier.money])
-    @money_per_hour=Float(cashier.money)/Float(cashier.time_past.hour+cashier.time_past.min/60)
+    @totalMoneyLabel.setText("Money earned: %d $"%[cashier.money.round(1)])
+    @money_per_hour=Float(cashier.money)/Float(cashier.time_past.hour+cashier.time_past.min/60.0)
     @money_per_hour = (@money_per_hour==Float::INFINITY or @money_per_hour.nan?) ? 0: @money_per_hour
     @hourMoneyLabel.setText("Money per hour: %d $"%[@money_per_hour.round])
     cashier.night? ? @day_night_label.setText("Night") : @day_night_label.setText(" Day")

@@ -14,7 +14,7 @@ class Cashier
     @time_past_seconds=0
     @time = Time.new(Time.now - Time.now)
     @ticks=0
-    @money=0
+    @money=0.0
     @car_counter=0
     @billing_enabled=true
   end
@@ -45,8 +45,8 @@ class Cashier
       when "truck"; money=@truck_price
       when "imported"; money=@imported_price
     end
-    if night?; money=money*(100-@night_price)/100 end
-    money=turns*money/60/60;
+    if night?; money=money*(100-@night_price)/100.0 end
+    money=turns*money/60.0/60.0;
     @money=@money+money
   end
 end
