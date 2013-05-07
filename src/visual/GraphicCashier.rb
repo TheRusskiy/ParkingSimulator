@@ -32,12 +32,11 @@ class GraphicCashier < Qt::GraphicsItem
   end
 
   def color_of_day
-    lightest = 4 * 60 # hours * min
     curr_time = (@cashier.time.hour-4)%24 * 60 + @cashier.time.min
     curr_time = (curr_time - 12 * 60).abs
     modifier = 255.0 * (curr_time/(12*60.0))
     c=255-modifier
     #c2=255-modifier*0.5
-    color = Qt::Color.new(c,c,modifier,255)
+    return Qt::Color.new(c,c,modifier,255)
   end
 end

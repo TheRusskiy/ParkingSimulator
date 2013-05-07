@@ -222,7 +222,7 @@ class Core
     @chance_to_park||=25
     if rand(100)>@chance_to_park; return 0 end
     @random_time||=Random.new
-    @random_time.rand(@max_time-@min_time)+@min_time
+    @random_time.rand(@max_time-@min_time+1)+@min_time
   end
 
   def set_frequency(frequency)

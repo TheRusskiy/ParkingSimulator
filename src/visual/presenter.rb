@@ -12,6 +12,7 @@ class Presenter
   attr_accessor :scale
   def initialize(scene, scale = 5)
     @scene = scene
+    @scene.setItemIndexMethod(-1)
     @scale = scale
     @objects = Array.new
     add_draw_item_to_classes()

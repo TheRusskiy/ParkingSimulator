@@ -4,7 +4,7 @@ class ParkingSpot
   attr_reader :angle
   attr_reader :coordinate
   attr_accessor :number
-  attr_accessor :speed
+  attr_accessor :speed, :caption
   def initialize(entrance_coordinate, coordinate, owning_road, angle, is_left)
     @angle=angle
     @coordinates=Hash.new
@@ -17,6 +17,7 @@ class ParkingSpot
     @is_left=is_left
     @number = 0
     @speed=1
+    @caption=""
   end
 
   def get_state(car)

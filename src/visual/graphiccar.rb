@@ -4,13 +4,15 @@ class GraphicCar < Qt::GraphicsItem
     super(nil)
     @car=nil
     @length=length
-    @color = Qt::Color.new(rand(256), rand(256), rand(256))
+    @text_color = Qt::Color.new(0,0,0)
+    #@text_brush = Qt::Brush.new(@text_color)
     adj = 1
     @boundingRect = Qt::RectF.new(0,0,length+adj,length+adj)
     @color = Qt::Color.new(rand(256), rand(256), rand(256))
     @brush = Qt::Brush.new(@color)
     setAcceptHoverEvents(true)
-    @text = Qt::GraphicsTextItem.new("", self)
+    @text = Qt::GraphicsSimpleTextItem.new("", self)
+    @text.brush=Qt::Brush.new(@text_color)
     hideText
     setZValue(5)
   end
@@ -40,7 +42,7 @@ class GraphicCar < Qt::GraphicsItem
     else
       @text.hide;
     end;
-    painter.brush = @brush
+    painter.brush=@brush
     #rectangle:
     #painter.drawRoundedRect(0,0, @length, @width, 1,1)
     painter.drawPolygon(@polygon, 6)
@@ -59,12 +61,13 @@ class GraphicCar < Qt::GraphicsItem
   def adjust_text_setting()
     @text.setRotation(0-rotation)
     @text.setScale(2.0/scale)
-    @text.setDefaultTextColor(@color)
-    #Integer(pos.x/scale).to_s+':'+Integer(pos.y/scale).to_s+
-    @text.setPlainText(@car.getModel+', '+
+    spot_text=""
+    if @car.assigned_spot
+      spot_text=", #"+@car.assigned_spot.caption
+    end
+    @text.setText(@car.getModel.capitalize+', '+
                            (@car.wants_to_park_time/60/60).round.to_s+'h'+
-                           ':'+(@car.wants_to_park_time/60%60).round.to_s+'m')
-    @text.adjustSize
+                           ':'+(@car.wants_to_park_time/60%60).round.to_s+'m'+spot_text)
   end
 
   def get_car_polygon()

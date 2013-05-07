@@ -648,7 +648,8 @@ class Window < Qt::MainWindow
       createTableRows cashier.spots.length
     end
     curr=0
-    cashier.spots.each do |spot|
+    cashier.spots.each_with_index do |spot, i|
+      spot.caption= (i+1).to_s
       setTableData(curr, 0, spot.occupied?.to_s)
       if spot.assigned_car
         setTableData(curr, 1, (spot.assigned_car.wants_to_park_time/60).round.to_s+'m')
