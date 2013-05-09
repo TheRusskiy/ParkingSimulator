@@ -52,7 +52,7 @@ class Core
     @presenter.clear
   end
 
-  def createCoordinates
+  def createCoordinates_3
     clear_previous()
     @p_height=60
     @p_length=180
@@ -90,7 +90,7 @@ class Core
     @presenter.redraw
   end
 
-  def createCoordinates_3
+  def createCoordinates_4
     clear_previous()
     level = 30
     length = 160
@@ -129,6 +129,78 @@ class Core
     @roads<<@road3
     @roads<<@parking_road
 
+    @presenter.redraw
+  end
+
+  def createCoordinates
+    clear_previous()
+    @p_height=80
+    @p_length=200
+    @to_entrance=30
+    @road_start = Coordinate.new(@p_length, @p_height)
+    @road_end = Coordinate.new(0, @p_height)
+    @road = Road.new(@road_start, @road_end)
+    @entrance_start = Coordinate.new(@road.coordinate_at(@to_entrance).x, @road.coordinate_at(@to_entrance).y)
+    @entrance_end = Coordinate.new(@p_length-50, @p_height-10)
+    @road2_start = Coordinate.new(@p_length-50, @p_height-80)
+    @road3_start = Coordinate.new(@p_length-80, @p_height-80)
+    @road3_end = Coordinate.new(@p_length-80, @p_height-10)
+    @road4_end = Coordinate.new(@p_length-100, @p_height-10)
+    @road5_end = Coordinate.new(@p_length-100, @p_height-60)
+    @road6_end = Coordinate.new(@p_length-160, @p_height-60)
+    @to_initial_road = 170
+    @parking_exit_coord = @road.coordinate_at @to_initial_road
+    @entrance = Road.new(@entrance_start, @entrance_end)
+    @road.add_parking_entrance(@entrance, @to_entrance)
+    @lot = ParkingLot.new
+    @lot.set_entrance @entrance
+    @road1 = ParkingRoad.new(@entrance_end, @road2_start)
+    @road2 = ParkingRoad.new(@road2_start, @road3_start)
+    @road3 = ParkingRoad.new(@road3_start, @road3_end)
+    @road4 = ParkingRoad.new(@road3_end, @road4_end)
+    @road5 = ParkingRoad.new(@road4_end, @road5_end)
+    @road6 = ParkingRoad.new(@road5_end, @road6_end)
+    @entrance.extension=@road1
+    @road1.extension=@road2
+    @road2.extension=@road3
+    @road3.extension =@road4
+    @road4.extension =@road5
+    @road5.extension =@road6
+    @lot.add_road_segment @road1
+    @lot.add_road_segment @road2
+    @lot.add_road_segment @road3
+    @lot.add_road_segment @road4
+    @lot.add_road_segment @road5
+    @lot.add_road_segment @road6
+
+    @cashier.spots=@lot.get_all_spots
+
+
+    @parking_exit = Road.new(@road6_end, @parking_exit_coord)
+    @parking_exit.connect_at @road, @to_initial_road
+    @road6.extension=@parking_exit
+
+    @presenter.clear
+    @presenter.add(@road)
+    @presenter.add(@road1)
+    @presenter.add(@road2)
+    @presenter.add(@road3)
+    @presenter.add(@road4)
+    @presenter.add(@road5)
+    @presenter.add(@road6)
+    @presenter.add(@entrance)
+    @presenter.add(@parking_exit)
+    @presenter.add(@cashier)
+    @roads = Array.new
+    @roads<<@road
+    @roads<<@road1
+    @roads<<@road2
+    @roads<<@road3
+    @roads<<@road4
+    @roads<<@road5
+    @roads<<@road6
+    @roads<<@entrance
+    @roads<<@parking_exit
     @presenter.redraw
   end
 

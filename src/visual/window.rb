@@ -190,7 +190,7 @@ class Window < Qt::MainWindow
                                         "Chair of Computer Systems\n" +
                                         "\n" +
                                         "Author: Dmitry Ishkov\n" +
-                                        "Group: 6402\n" +
+                                        "Group: 6402 C 245\n" +
                                         "Instructor: associate professor Larisa Zelenko")
     Qt::MessageBox::information(self, tr("About"), @about_message)
   end
